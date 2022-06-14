@@ -1,6 +1,11 @@
-﻿namespace Herald.Core;
+﻿using Herald.Core.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 
-public class DependencyInjection
+namespace Herald.Core;
+
+public static class DependencyInjection
 {
-    
+    public static IServiceCollection AddHeraldCore(this IServiceCollection services)
+        => services
+            .AddConfiguration();
 }

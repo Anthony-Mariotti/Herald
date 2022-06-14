@@ -1,6 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hearald.Bot", "src\Hearald.Bot\Hearald.Bot.csproj", "{2F6A6238-3F79-482F-97A7-A0E3FA17AEB9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Herald.Bot", "src\Herald.Bot\Herald.Bot.csproj", "{2F6A6238-3F79-482F-97A7-A0E3FA17AEB9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Herald.Core", "src\Herald.Core\Herald.Core.csproj", "{09CBB63F-BC55-40BC-BBDE-F180B033F289}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Herald.Commands", "src\Herald.Commands\Herald.Commands.csproj", "{EC2DA977-D167-4B3C-8980-FCD9AE5A0A49}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Herald.Events", "src\Herald.Events\Herald.Events.csproj", "{BEC486D2-BFC9-4FFC-A28C-2BD18B449ACF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Herald.Database", "src\Herald.Database\Herald.Database.csproj", "{94C3778A-4570-41B6-9C44-A089E5F55D56}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,5 +20,21 @@ Global
 		{2F6A6238-3F79-482F-97A7-A0E3FA17AEB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F6A6238-3F79-482F-97A7-A0E3FA17AEB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2F6A6238-3F79-482F-97A7-A0E3FA17AEB9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09CBB63F-BC55-40BC-BBDE-F180B033F289}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09CBB63F-BC55-40BC-BBDE-F180B033F289}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09CBB63F-BC55-40BC-BBDE-F180B033F289}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09CBB63F-BC55-40BC-BBDE-F180B033F289}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC2DA977-D167-4B3C-8980-FCD9AE5A0A49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC2DA977-D167-4B3C-8980-FCD9AE5A0A49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC2DA977-D167-4B3C-8980-FCD9AE5A0A49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC2DA977-D167-4B3C-8980-FCD9AE5A0A49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BEC486D2-BFC9-4FFC-A28C-2BD18B449ACF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEC486D2-BFC9-4FFC-A28C-2BD18B449ACF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEC486D2-BFC9-4FFC-A28C-2BD18B449ACF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEC486D2-BFC9-4FFC-A28C-2BD18B449ACF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94C3778A-4570-41B6-9C44-A089E5F55D56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94C3778A-4570-41B6-9C44-A089E5F55D56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94C3778A-4570-41B6-9C44-A089E5F55D56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94C3778A-4570-41B6-9C44-A089E5F55D56}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

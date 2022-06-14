@@ -6,9 +6,25 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>dotnet-Hearald.Bot-A2D908DB-E381-4D0F-B146-ED1F3991445C</UserSecretsId>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <NeutralLanguage>en-US</NeutralLanguage>
+        <Authors>Anthony Mariotti</Authors>
+        <Copyright>2022</Copyright>
+        <Version>1.0.0.0-alpha</Version>
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="DSharpPlus" Version="4.2.0" />
+        <PackageReference Include="DSharpPlus.Lavalink" Version="4.2.0" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
+        <PackageReference Include="Serilog" Version="2.11.0" />
+        <PackageReference Include="Serilog.Extensions.Hosting" Version="4.2.0" />
+        <PackageReference Include="Serilog.Settings.Configuration" Version="3.3.0" />
+        <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Herald.Commands\Herald.Commands.csproj" />
+      <ProjectReference Include="..\Herald.Core\Herald.Core.csproj" />
+      <ProjectReference Include="..\Herald.Events\Herald.Events.csproj" />
     </ItemGroup>
 </Project>

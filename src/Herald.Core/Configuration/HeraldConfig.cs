@@ -1,8 +1,24 @@
-﻿namespace Herald.Core.Configuration;
+﻿using DSharpPlus.Lavalink;
+using DSharpPlus.Net;
 
-public class HeraldConfiguration
+namespace Herald.Core.Configuration;
+
+public class HeraldConfig
 {
     public string? DiscordKey { get; set; }
-    
-    public 
+
+    public LavalinkConfiguration Lavalink { get; set; } = new LavalinkConfiguration
+    {
+        RestEndpoint = new ConnectionEndpoint
+        {
+            Hostname = "localhost",
+            Port = 2333
+        },
+        SocketEndpoint = new ConnectionEndpoint
+        {
+            Hostname = "localhost",
+            Port = 2333
+        },
+        Password = "youshallnotpass"
+    };
 }
