@@ -1,8 +1,8 @@
 ﻿using DSharpPlus;
 using DSharpPlus.SlashCommands;
-using Herald.Commands;
+using Herald.Bot.Commands;
 using Herald.Core.Configuration;
-using Herald.Events.Abstractions.Handlers;
+using Herald.Bot.Events.Abstractions.Handlers;
 
 namespace Herald.Bot.Extensions;
 

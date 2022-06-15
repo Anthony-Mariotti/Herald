@@ -23,8 +23,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Herald.Commands\Herald.Commands.csproj" />
+      <ProjectReference Include="..\Herald.Bot.Commands\Herald.Bot.Commands.csproj" />
+      <ProjectReference Include="..\Herald.Core.Application\Herald.Core.Application.csproj" />
+      <ProjectReference Include="..\Herald.Core.Infrastructure\Herald.Core.Infrastructure.csproj" />
       <ProjectReference Include="..\Herald.Core\Herald.Core.csproj" />
-      <ProjectReference Include="..\Herald.Events\Herald.Events.csproj" />
+      <ProjectReference Include="..\Herald.Bot.Events\Herald.Bot.Events.csproj" />
     </ItemGroup>
 </Project>

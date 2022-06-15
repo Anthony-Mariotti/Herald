@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="MongoDB.Driver" Version="2.16.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Herald.Core.Application\Herald.Core.Application.csproj" />
+      <ProjectReference Include="..\Herald.Core.Domain\Herald.Core.Domain.csproj" />
+      <ProjectReference Include="..\Herald.Core\Herald.Core.csproj" />
+    </ItemGroup>
+
+</Project>

@@ -1,8 +1,11 @@
 using Herald.Bot;
 using Herald.Bot.Extensions;
-using Herald.Commands;
+using Herald.Bot.Commands;
 using Herald.Core;
-using Herald.Events;
+using Herald.Bot.Events;
+using Herald.Core.Application;
+using Herald.Core.Infrastructure;
+using Herald.Core.Infrastructure.Persistence;
 using Serilog;
 
 var host = Host.CreateDefaultBuilder(args)
@@ -10,11 +13,20 @@ var host = Host.CreateDefaultBuilder(args)
     {
         services.AddHostedService<Worker>();
         services.AddHeraldCore();
+        services.AddHeraldApplicationServices();
+        services.AddHeraldInfrastructure();
+        
         services.AddHeraldEvents();
         services.AddHeraldCommands();
         services.AddDiscordClient();
     })
     .UseSerilog((context, configuration) => configuration.ReadFrom.Configuration(context.Configuration))
     .Build();
+
+using (var scope = host.Services.CreateScope())
+{
+    var initializer = scope.ServiceProvider.GetRequiredService<HeraldDbInitializer>();
+    await initializer.SeedAsync();
+}
 
 await host.RunAsync();

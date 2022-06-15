@@ -21,4 +21,6 @@ public class HeraldConfig
         },
         Password = "youshallnotpass"
     };
+
+    public HeraldDbConfig Database { get; set; } = new HeraldDbConfig();
 }
