@@ -2,6 +2,9 @@
 using DSharpPlus.Lavalink;
 using DSharpPlus.Lavalink.EventArgs;
 using DSharpPlus.SlashCommands;
+using Herald.Core.Application.Soundtracks.Commands.AddTrackToQueue;
+using Herald.Core.Application.Soundtracks.Commands.PlayNextTrack;
+using Herald.Core.Application.Soundtracks.Queries.GetQueue;
 using Herald.Core.Exceptions;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -90,8 +93,15 @@ public class SoundtrackPlayCommand : SoundtrackBaseCommand
 
         if (connection.CurrentState.CurrentTrack is not null)
         {
+            await Mediator.Send(new AddTrackToQueueCommand
+            {
+                GuildId = context.Guild.Id,
+                NotifyChannelId = context.Channel.Id,
+                Track = selectedTrack
+            });
+            
             await context.CreateResponseAsync(new DiscordInteractionResponseBuilder().WithTitle("Currently Playing")
-                .WithContent("Currently playing a track ask later."));
+                .WithContent($"Added to Queue {selectedTrack.Title}"));
             return;
         }
         
@@ -130,8 +140,34 @@ public class SoundtrackPlayCommand : SoundtrackBaseCommand
     
     private async Task PlaybackFinished(LavalinkGuildConnection connection, TrackFinishEventArgs args)
     {
+        var queue = await Mediator.Send(new GetQueueQuery(connection.Guild.Id));
+
         if (args.Reason == TrackEndReason.Finished)
         {
+            if (queue.Tracks.Any())
+            {
+                var nextTrack = queue.Tracks.First();
+
+                if (NodeConnection is null)
+                {
+                    await DisconnectAsync(connection);
+                    return;
+                }
+            
+                var track = await NodeConnection.Rest.DecodeTrackAsync(nextTrack.TrackString);
+
+                await connection.PlayAsync(track);
+                await Mediator.Send(new PlayNextTrackCommand
+                {
+                    GuildId = connection.Guild.Id,
+                    TrackIdentifier = track.Identifier
+                });
+
+                var responseChannel = connection.Guild.GetChannel(queue.NotifyChannelId);
+                await responseChannel.SendMessageAsync($"Now playing {track.Title} ({track.Length:hh\\:mm\\:ss})!");
+                return;
+            }
+            
             await DisconnectAsync(connection);
         }
     }

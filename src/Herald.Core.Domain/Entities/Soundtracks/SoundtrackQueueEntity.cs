@@ -1,4 +1,5 @@
-﻿using Herald.Core.Domain.ValueObjects.Soundtracks;
+﻿using DSharpPlus.Lavalink;
+using Herald.Core.Domain.ValueObjects.Soundtracks;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Herald.Core.Domain.Entities.Soundtracks;
@@ -12,11 +13,11 @@ public sealed class SoundtrackQueueEntity : BaseEntity, IAggregateRoot
 
     public bool Playing { get; set; } = false;
 
-    public IEnumerable<Soundtrack> Tracks { get; set; } = new List<Soundtrack>();
+    public IList<Soundtrack> Tracks { get; set; } = new List<Soundtrack>();
     
     public SoundtrackQueueEntity() { }
 
-    public SoundtrackQueueEntity(ulong guildId, ulong notifyChannelId, bool playing = false, IEnumerable<Soundtrack>? tracks = null)
+    public SoundtrackQueueEntity(ulong guildId, ulong notifyChannelId, bool playing = false, IList<Soundtrack>? tracks = null)
     {
         GuildId = guildId;
         NotifyChannelId = notifyChannelId;
@@ -25,6 +26,24 @@ public sealed class SoundtrackQueueEntity : BaseEntity, IAggregateRoot
         if (tracks is not null)
         {
             Tracks = tracks;
+        }
+    }
+
+    public void AddToQueue(ulong notifyChannelId, LavalinkTrack track)
+    {
+        NotifyChannelId = notifyChannelId;
+        Tracks.Add(Soundtrack.Create(track.Identifier, track.Author, track.Title, track.TrackString, track.Uri));
+    }
+
+    public void RemoveFromQueue(string trackIdentifier)
+    {
+        if (trackIdentifier == null) throw new ArgumentNullException(nameof(trackIdentifier));
+
+        var track = Tracks.FirstOrDefault(x => x.Identifier!.Equals(trackIdentifier));
+
+        if (track is not null)
+        {
+            Tracks.Remove(track);
         }
     }
 }
