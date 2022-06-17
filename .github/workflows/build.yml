@@ -1,0 +1,26 @@
+﻿name: build
+on: [pull_request, push]
+
+jobs: 
+  build:
+    strategy:
+      matrix: 
+        dotnet-version: ['6.0.x']
+        os: [ubuntu-20.04, windows-2022]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+          
+      - name: Install Dependencies
+        run: dotnet restore
+        
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+        
+      #- name: Test
+      #  run: dotnet test --no-restore --verbosity normal
