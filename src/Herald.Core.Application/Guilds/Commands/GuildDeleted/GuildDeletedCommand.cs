@@ -2,11 +2,11 @@
 using Herald.Core.Application.Exceptions;
 using Herald.Core.Domain.Entities.Guilds;
 using MediatR;
-using MongoDB.Driver;
+using Microsoft.EntityFrameworkCore;
 
 namespace Herald.Core.Application.Guilds.Commands.GuildDeleted;
 
-public record GuildDeletedCommand(ulong guildId) : IRequest;
+public record GuildDeletedCommand(ulong GuildId) : IRequest;
 
 public class GuildDeletedCommandHandler : IRequestHandler<GuildDeletedCommand>
 {
@@ -21,23 +21,18 @@ public class GuildDeletedCommandHandler : IRequestHandler<GuildDeletedCommand>
     
     public async Task<Unit> Handle(GuildDeletedCommand request, CancellationToken cancellationToken)
     {
-        var filter = Builders<GuildEntity>.Filter
-            .Where(x => x.GuildId.Equals(request.guildId));
+        // var filter = Builders<GuildEntity>.Filter
+        //     .Where(x => x.GuildId.Equals(request.guildId));
 
-        var entity = await _context.Guilds.Find(filter)
-            .Limit(1)
-            .SingleOrDefaultAsync(cancellationToken);
+        var guild = await _context.Guilds.SingleOrDefaultAsync(x => x.GuildId.Equals(request.GuildId),
+            cancellationToken);
 
-        if (entity is null)
-        {
-            throw new NotFoundException(nameof(GuildEntity), request.guildId);
-        }
+        if (guild is null)
+            throw new NotFoundException(nameof(GuildEntity), request.GuildId);
 
-        var update = Builders<GuildEntity>.Update
-            .Set(x => x.Joined, false)
-            .Set(x => x.LeftOn, _dateTime.UtcNow);
+        guild.LeftServer(_dateTime.UtcNow);
 
-        await _context.Guilds.UpdateOneAsync(filter, update, cancellationToken: cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
         
         return Unit.Value;
     }

@@ -1,17 +1,17 @@
 ﻿using Herald.Core.Application.Abstractions;
 using Herald.Core.Application.Exceptions;
 using Herald.Core.Domain.Entities.Guilds;
+using Herald.Core.Domain.ValueObjects.Modules;
 using MediatR;
-using MongoDB.Bson;
-using MongoDB.Driver;
+using Microsoft.EntityFrameworkCore;
 
 namespace Herald.Core.Application.Modules.Commands.ModuleDisable;
 
 public record ModuleDisableCommand : IRequest
 {
     public ulong GuildId { get; init; }
-    
-    public ObjectId ModuleId { get; init; }
+
+    public HeraldModule Module { get; init; } = default!;
 }
 
 public class ModuleDisableCommandHandler : IRequestHandler<ModuleDisableCommand>
@@ -25,22 +25,22 @@ public class ModuleDisableCommandHandler : IRequestHandler<ModuleDisableCommand>
     
     public async Task<Unit> Handle(ModuleDisableCommand request, CancellationToken cancellationToken)
     {
-        var filter = Builders<GuildEntity>.Filter
-            .Where(x => x.GuildId.Equals(request.GuildId));
+        // var filter = Builders<GuildEntity>.Filter
+        //     .Where(x => x.GuildId.Equals(request.GuildId));
 
-        var guild = await _context.Guilds.Find(filter)
-            .Limit(1)
-            .SingleOrDefaultAsync(cancellationToken);
+        var guild = await _context.Guilds
+            .Include(x => x.Modules)
+            .SingleOrDefaultAsync(x => x.GuildId.Equals(request.GuildId), cancellationToken);
 
         if (guild is null)
-        {
             throw new NotFoundException(nameof(GuildEntity), request.GuildId);
+
+        if (guild.DisableModule(request.Module))
+        {
+            // TODO: Domain Event
+            await _context.SaveChangesAsync(cancellationToken);
         }
         
-        guild.DisableModule(request.ModuleId);
-
-        await _context.Guilds.ReplaceOneAsync(filter, guild, cancellationToken: cancellationToken);
-
         return Unit.Value;
     }
 }

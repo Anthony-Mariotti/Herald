@@ -35,8 +35,13 @@ public class Worker : BackgroundService
     {
         var lavalink = _discord.UseLavalink();
         
+        _logger.LogInformation("Connecting to Discord");
         await _discord.ConnectAsync();
+        
+        _logger.LogInformation("Connecting to Lavalink");
         await lavalink.ConnectAsync(_config.Lavalink);
+        
+        _logger.LogInformation("Herald is now connected and ready");
     }
 
     public override Task StopAsync(CancellationToken cancellationToken)

@@ -2,10 +2,11 @@
 using DSharpPlus.Lavalink;
 using DSharpPlus.Lavalink.EventArgs;
 using DSharpPlus.SlashCommands;
-using Herald.Core.Application.Soundtracks.Commands.AddTrackToQueue;
-using Herald.Core.Application.Soundtracks.Commands.PlayNextTrack;
-using Herald.Core.Application.Soundtracks.Queries.GetQueue;
-using Herald.Core.Exceptions;
+using Herald.Bot.Commands.Utilities;
+using Herald.Core.Application.Soundtracks.Commands.PlayTrackCommand;
+using Herald.Core.Application.Soundtracks.Commands.QueueTrack;
+using Herald.Core.Application.Soundtracks.Commands.TrackEnded;
+using Herald.Core.Application.Soundtracks.Queries.GetNextTrack;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -27,89 +28,56 @@ public class SoundtrackPlayCommand : SoundtrackBaseCommand
     {
         _logger.LogInformation("Soundtrack Play Command Executed by {User} in {Guild}", context.Guild.Name, context.User.Username);
 
-        if (!await IsModuleEnabled(context))
-        {
-            return;
-        }
+        if (!await CommandPreCheckAsync(context)) return;
         
-        if (context.Member.VoiceState?.Channel is null)
-        {
-            await context.CreateResponseAsync(new DiscordInteractionResponseBuilder().WithTitle("Invalid Usage")
-                .WithContent("You are not in a voice channel."));
+        if (!await ConnectToChannelAsync(context))
             return;
-        }
 
-        try
-        {
-            await LoadLavalinkExtension(context);
-            await LoadLavalinkNode();
-        }
-        catch (LavalinkException e)
-        {
-            _logger.LogError("Failure loading lavalink node connection. {ErrorMessage}", e.Message);
-            await SendErrorConnectionResponse(context);
-            return;
-        }
+        var trackSearchResult = await SearchForTrack(search);
         
-        var trackLoadResult = await SearchForTrack(search);
-        
-        if (trackLoadResult == null)
+        if (trackSearchResult == null)
         {
             await context.CreateResponseAsync(new DiscordInteractionResponseBuilder().WithTitle("No Results")
                 .WithContent("No matching results where found."));
             return;
         }
         
-        if (trackLoadResult.LoadResultType is LavalinkLoadResultType.NoMatches)
+        if (trackSearchResult.LoadResultType is LavalinkLoadResultType.NoMatches)
         {
             await context.CreateResponseAsync(new DiscordInteractionResponseBuilder().WithTitle("No Results")
                 .WithContent("No matching results where found."));
             return;
         }
         
-        LavalinkTrack selectedTrack = default!;
+        var selectedTrack = trackSearchResult.Tracks.First();
 
-        // TODO: IF YOUTUBE SEARCH SHOW MULTI PROMPT FOR LIST OF TRACKS
-        if (trackLoadResult.Tracks.Count() > 1)
+        if (GuildConnection.CurrentState.CurrentTrack is not null)
         {
-            // TODO: SHOW PROMPT
-            selectedTrack = trackLoadResult.Tracks.First();
-        }
-
-        if (trackLoadResult.Tracks.Count() == 1)
-        {
-            selectedTrack = trackLoadResult.Tracks.First();
-        }
-
-        if (NodeConnection is null)
-        {
-            _logger.LogError("Failure loading lavalink node connection");
-            await SendErrorConnectionResponse(context);
-            return;
-        }
-
-        var connection = NodeConnection.GetGuildConnection(context.Member.VoiceState.Guild) ??
-                         await NodeConnection.ConnectAsync(context.Member.VoiceState.Channel);
-
-        if (connection.CurrentState.CurrentTrack is not null)
-        {
-            await Mediator.Send(new AddTrackToQueueCommand
+            await context.CreateResponseAsync(AddedToQueueEmbed(selectedTrack));
+            
+            await Mediator.Send(new QueueTrackCommand
             {
                 GuildId = context.Guild.Id,
                 NotifyChannelId = context.Channel.Id,
+                RequestUserId = context.User.Id,
                 Track = selectedTrack
             });
             
-            await context.CreateResponseAsync(new DiscordInteractionResponseBuilder().WithTitle("Currently Playing")
-                .WithContent($"Added to Queue {selectedTrack.Title}"));
             return;
         }
+
+        await context.CreateResponseAsync(NowPlayingEmbed(selectedTrack));
         
+        GuildConnection.PlaybackFinished += PlaybackFinished;
+        await GuildConnection.PlayAsync(selectedTrack);
         
-        connection.PlaybackFinished += PlaybackFinished;
-        await connection.PlayAsync(selectedTrack);
-        
-        await context.CreateResponseAsync(new DiscordInteractionResponseBuilder().WithContent("Now Playing the selected track"));
+        await Mediator.Send(new PlayTrackCommand
+        {
+            GuildId = context.Guild.Id,
+            NotifyChannelId = context.Channel.Id,
+            RequestUserId = context.User.Id,
+            Track = selectedTrack
+        });
     }
 
     private async Task<LavalinkLoadResult?> SearchForTrack(string search)
@@ -140,31 +108,39 @@ public class SoundtrackPlayCommand : SoundtrackBaseCommand
     
     private async Task PlaybackFinished(LavalinkGuildConnection connection, TrackFinishEventArgs args)
     {
-        var queue = await Mediator.Send(new GetQueueQuery(connection.Guild.Id));
-
+        var nextTrack = await Mediator.Send(new GetNextTrackQuery(connection.Guild.Id));
+        
         if (args.Reason == TrackEndReason.Finished)
         {
-            if (queue.Tracks.Any())
+            _logger.LogDebug("Playback finished for {TrackValue} in {GuildId}", args.Track.Identifier, args.Player.Guild.Id);
+            if (nextTrack is not null)
             {
-                var nextTrack = queue.Tracks.First();
-
-                if (NodeConnection is null)
-                {
-                    await DisconnectAsync(connection);
-                    return;
-                }
-            
                 var track = await NodeConnection.Rest.DecodeTrackAsync(nextTrack.TrackString);
-
+                track.TrackString = nextTrack.TrackString;
+        
                 await connection.PlayAsync(track);
-                await Mediator.Send(new PlayNextTrackCommand
+        
+                // TODO: Reply to original message from channel
+                var channel = connection.Guild.GetChannel(nextTrack.NotifyChannelId);
+        
+                if (channel is null)
+                {
+                    _logger.LogWarning("Unable to find channel {ChannelId} in {GuildId}", nextTrack.NotifyChannelId, connection.Guild.Id);
+                }
+                
+                channel?.SendMessageAsync(NowPlayingEmbed(track));
+        
+                await Mediator.Send(new TrackEndedCommand
                 {
                     GuildId = connection.Guild.Id,
-                    TrackIdentifier = track.Identifier
+                    TrackId = args.Track.Identifier
                 });
-
-                var responseChannel = connection.Guild.GetChannel(queue.NotifyChannelId);
-                await responseChannel.SendMessageAsync($"Now playing {track.Title} ({track.Length:hh\\:mm\\:ss})!");
+                
+                await Mediator.Send(new PlayTrackCommand
+                {
+                    GuildId = connection.Guild.Id,
+                    Track = track
+                });
                 return;
             }
             
@@ -177,4 +153,26 @@ public class SoundtrackPlayCommand : SoundtrackBaseCommand
         connection.PlaybackFinished -= PlaybackFinished;
         await connection.DisconnectAsync();
     }
+
+    private static DiscordEmbed NowPlayingEmbed(LavalinkTrack track)
+        =>  HeraldEmbedBuilder
+            .Information()
+            .WithAuthor("Now Playing", iconUrl: "https://play-lh.googleusercontent.com/SqMGe5wxL6HfT03WNGepMvGxXyS9EOFm4V7NzLCofFxPwFVJqRavYe5-EPQV3WAW7DU")
+            .WithTitle(track.Title)
+            .WithUrl(track.Uri)
+            .WithImageUrl($"https://i.ytimg.com/vi/{track.Identifier}/hq720.jpg")
+            .WithFooter($"Requested by User", "https://cdn.discordapp.com/avatars/105522177406672896/0ca616626c74ae17f3a901ef45dab1bf.webp?size=32")
+            .WithTimestamp(DateTime.Now)
+            .Build();
+
+    private static DiscordEmbed AddedToQueueEmbed(LavalinkTrack track)
+        => HeraldEmbedBuilder
+             .Success()
+             .WithAuthor("Added track to queue!", iconUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Eo_circle_green_checkmark.svg/2048px-Eo_circle_green_checkmark.svg.png")
+             .WithTitle(track.Title)
+             .WithUrl(track.Uri)
+             .WithThumbnail($"https://i.ytimg.com/vi/{track.Identifier}/hq720.jpg")
+             .WithFooter($"Requested by User", "https://cdn.discordapp.com/avatars/105522177406672896/0ca616626c74ae17f3a901ef45dab1bf.webp?size=32")
+             .WithTimestamp(DateTime.Now)
+             .Build();
 }

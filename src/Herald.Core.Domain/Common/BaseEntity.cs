@@ -1,8 +1,7 @@
-﻿using MongoDB.Bson;
+﻿namespace Herald.Core.Domain.Common;
 
-namespace Herald.Core.Domain.Common;
-
-public class BaseEntity
+public class BaseEntity : BaseDomainEntity
 {
-    public ObjectId Id { get; set; }
+    // ReSharper disable once UnusedAutoPropertyAccessor.Global
+    public long Id { get; set; }
 }

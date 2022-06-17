@@ -1,29 +1,25 @@
-﻿using Herald.Core.Domain.ValueObjects.Guilds;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
+﻿using Herald.Core.Domain.ValueObjects.Modules;
 
 namespace Herald.Core.Domain.Entities.Guilds;
 
-public class GuildEntity : BaseEntity, IAggregateRoot
+public class GuildEntity : BaseDomainEntity, IAggregateRoot
 {
-    [BsonRequired]
+    // Primary Key
     public ulong GuildId { get; set; }
 
-    [BsonRequired]
     public ulong OwnerId { get; set; }
     
     public bool Joined { get; set; }
 
-    public IList<GuildModule> Modules { get; set; } = new List<GuildModule>();
+    public DateTime JoinedOn { get; set; }
 
-    public DateTime? JoinedOn { get; set; }
-
-    [BsonIgnoreIfNull]
     public DateTime? LeftOn { get; set; }
+    
+    public ICollection<HeraldModule> Modules { get; set; } = new List<HeraldModule>();
     
     public GuildEntity() { }
 
-    public GuildEntity(ulong guildId, ulong ownerId, DateTime? joinedOn, IList<GuildModule>? modules)
+    public GuildEntity(ulong guildId, ulong ownerId, DateTime? joinedOn, ICollection<HeraldModule>? modules)
     {
         GuildId = guildId;
         OwnerId = ownerId;
@@ -36,26 +32,43 @@ public class GuildEntity : BaseEntity, IAggregateRoot
         }
     }
 
-    public static GuildEntity Create(ulong guildId, ulong ownerId, DateTime? joinedOn, IList<GuildModule>? modules = null)
-        => new GuildEntity(guildId, ownerId, joinedOn, modules);
+    public static GuildEntity Create(ulong guildId, ulong ownerId, DateTime? joinedOn, ICollection<HeraldModule>? modules = null)
+        => new(guildId, ownerId, joinedOn, modules);
 
-    public void EnableModule(ObjectId moduleId)
+    public void JoinedServer(ulong ownerId)
     {
-        var module = Modules.SingleOrDefault(x => x.ModuleRef.Id.Equals(moduleId));
-
-        if (module is not null)
-        {
-            module.Enable();
-            return;
-        }
-        
-        Modules.Add(new GuildModule(moduleId, true));
+        OwnerId = ownerId;
+        Joined = true;
+        LeftOn = null;
     }
 
-    public void DisableModule(ObjectId moduleId)
+    public void LeftServer(DateTime leftOn)
     {
-        var module = Modules.SingleOrDefault(x => x.ModuleRef.Id.Equals(moduleId));
+        Joined = false;
+        LeftOn = leftOn;
+    }
+    
+    public bool EnableModule(HeraldModule requestedModule)
+    {
+        var module = Modules.SingleOrDefault(x => x.Equals(requestedModule));
 
-        module?.Disable();
+        if (module is null)
+        {
+            Modules.Add(HeraldModule.Soundtrack);
+            return true;
+        }
+
+        return false;
+    }
+
+    public bool DisableModule(HeraldModule requestedModule)
+    {
+        var module = Modules.SingleOrDefault(x => x.Equals(requestedModule));
+
+        if (module is null)
+            return false;
+        
+        Modules.Remove(module);
+        return true;
     }
 }

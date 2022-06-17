@@ -1,26 +1,30 @@
-﻿using Herald.Core.Application.Abstractions;
-using Herald.Core.Domain.Entities.Modules;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using MongoDB.Driver;
 
 namespace Herald.Core.Infrastructure.Persistence;
 
 public class HeraldDbInitializer
 {
     private readonly ILogger<HeraldDbInitializer> _logger;
-    private readonly IHeraldDbContext _context;
+    private readonly HeraldDbContext _context;
 
-    public HeraldDbInitializer(ILogger<HeraldDbInitializer> logger, IHeraldDbContext context)
+    public HeraldDbInitializer(ILogger<HeraldDbInitializer> logger, HeraldDbContext context)
     {
         _logger = logger;
         _context = context;
     }
 
-    public async Task SeedAsync()
+    public async Task InitializeAsync()
     {
+        _logger.LogTrace("Initializing database");
         try
         {
-            await TrySeedAsync();
+            if (_context.Database.IsSqlServer())
+            {
+                _logger.LogTrace("Beginning database migration");
+                await _context.Database.MigrateAsync();
+                _logger.LogTrace("Finished database migration");
+            }
         }
         catch (Exception ex)
         {
@@ -29,24 +33,22 @@ public class HeraldDbInitializer
         }
     }
 
+    public async Task SeedAsync()
+    {
+        _logger.LogTrace("Seeding database");
+        try
+        {
+            await TrySeedAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while seeding the database");
+            throw;
+        }
+    }
+
     public async Task TrySeedAsync()
     {
-        var modules = new List<ModuleEntity>
-        {
-            ModuleEntity.Create("Soundtrack")
-        };
-
-        var filter = Builders<ModuleEntity>.Filter
-            .In(e => e.Name, modules.Select(x => x.Name));
-
-        var foundModules = await _context.Modules.Find(filter)
-            .Project(x => x.Name).ToListAsync();
-
-        var modulesToInsert = modules.Where(x => !foundModules.Contains(x.Name)).ToList();
-
-        if (modulesToInsert.Any())
-        {
-            await _context.Modules.InsertManyAsync(modulesToInsert);
-        }
+        await _context.SaveChangesAsync();
     }
 }

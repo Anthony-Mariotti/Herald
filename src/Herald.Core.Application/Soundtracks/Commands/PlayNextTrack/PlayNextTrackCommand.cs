@@ -2,15 +2,15 @@
 using Herald.Core.Application.Exceptions;
 using Herald.Core.Domain.Entities.Soundtracks;
 using MediatR;
-using MongoDB.Driver;
+using Microsoft.EntityFrameworkCore;
 
 namespace Herald.Core.Application.Soundtracks.Commands.PlayNextTrack;
 
-public class PlayNextTrackCommand : IRequest
+public record PlayNextTrackCommand : IRequest
 {
     public ulong GuildId { get; init; }
-
-    public string TrackIdentifier { get; init; } = default!;
+    
+    public long TrackId { get; init; }
 }
 
 public class PlayNextTrackCommandHandler : IRequestHandler<PlayNextTrackCommand>
@@ -24,21 +24,16 @@ public class PlayNextTrackCommandHandler : IRequestHandler<PlayNextTrackCommand>
     
     public async Task<Unit> Handle(PlayNextTrackCommand request, CancellationToken cancellationToken)
     {
-        var filter = Builders<SoundtrackQueueEntity>.Filter
-            .Eq(x => x.GuildId, request.GuildId);
-
-        var queue = await _context.SoundtrackQueues.Find(filter)
-            .Limit(1)
-            .SingleOrDefaultAsync(cancellationToken);
+        var queue = await _context.Queues.SingleOrDefaultAsync(x => x.GuildId.Equals(request.GuildId),
+            cancellationToken);
 
         if (queue is null)
-        {
-            throw new NotFoundException(nameof(SoundtrackQueueEntity), request.GuildId);
-        }
+            throw new NotFoundException(nameof(QueueEntity), request.GuildId);
 
-        queue.RemoveFromQueue(request.TrackIdentifier);
+        var track = queue.GetNextTrack();
+        track?.Play();
 
-        await _context.SoundtrackQueues.ReplaceOneAsync(filter, queue, cancellationToken: cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
         
         return Unit.Value;
     }

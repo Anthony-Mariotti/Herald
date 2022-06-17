@@ -14,7 +14,7 @@ public class MappingProfile : Profile
     {
         var mapFromType = typeof(IMapFrom<>);
 
-        var mappingMethodName = nameof(IMapFrom<object>.Mapping);
+        const string mappingMethodName = nameof(IMapFrom<object>.Mapping);
 
         bool HasInterface(Type t) => t.IsGenericType && t.GetGenericTypeDefinition() == mapFromType;
 

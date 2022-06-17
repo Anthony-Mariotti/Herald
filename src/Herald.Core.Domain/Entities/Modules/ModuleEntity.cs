@@ -1,10 +1,7 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-
-namespace Herald.Core.Domain.Entities.Modules;
+﻿namespace Herald.Core.Domain.Entities.Modules;
 
 public class ModuleEntity : BaseEntity
 {
-    [BsonRequired]
     public string? Name { get; set; }
 
     public ModuleEntity() { }

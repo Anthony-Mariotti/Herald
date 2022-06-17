@@ -18,13 +18,13 @@ public class MessageEventHandler : IMessageEventHandler
     {
         if (args.Author.IsBot) return Task.CompletedTask;
         
-        _logger.LogInformation("Message Created Event: {Guild}", args.Guild.Name);
+        _logger.LogDebug("Message Created Event: {Guild}", args.Guild.Name);
         return Task.CompletedTask;
     }
 
     public Task OnMessageAcknowledged(DiscordClient client, MessageAcknowledgeEventArgs args)
     {
-        _logger.LogInformation("Message Acknowledged Event: {Guild}", args.Channel.Guild.Name);
+        _logger.LogDebug("Message Acknowledged Event: {Guild}", args.Channel.Guild.Name);
         return Task.CompletedTask;
     }
 
@@ -32,43 +32,43 @@ public class MessageEventHandler : IMessageEventHandler
     {
         if (args.Author.IsBot) return Task.CompletedTask;
         
-        _logger.LogInformation("Message Updated Event: {Guild}", args.Guild.Name);
+        _logger.LogDebug("Message Updated Event: {Guild}", args.Guild.Name);
         return Task.CompletedTask;
     }
 
     public Task OnMessageDeleted(DiscordClient client, MessageDeleteEventArgs args)
     {
-        _logger.LogInformation("Message Deleted Event: {Guild}", args.Guild.Name);
+        _logger.LogDebug("Message Deleted Event: {Guild}", args.Guild.Name);
         return Task.CompletedTask;
     }
 
     public Task OnMessagesBulkDeleted(DiscordClient client, MessageBulkDeleteEventArgs args)
     {
-        _logger.LogInformation("Messages Bulk Deleted Event: {Guild}", args.Guild.Name);
+        _logger.LogDebug("Messages Bulk Deleted Event: {Guild}", args.Guild.Name);
         return Task.CompletedTask;
     }
 
     public Task OnMessageReactionAdded(DiscordClient client, MessageReactionAddEventArgs args)
     {
-        _logger.LogInformation("Message Reaction Added Event: {Guild}", args.Guild.Name);
+        _logger.LogDebug("Message Reaction Added Event: {Guild}", args.Guild.Name);
         return Task.CompletedTask;
     }
 
     public Task OnMessageReactionRemoved(DiscordClient client, MessageReactionRemoveEventArgs args)
     {
-        _logger.LogInformation("Message Reaction Removed Event: {Guild}", args.Guild.Name);
+        _logger.LogDebug("Message Reaction Removed Event: {Guild}", args.Guild.Name);
         return Task.CompletedTask;
     }
 
     public Task OnMessageReactionsCleared(DiscordClient client, MessageReactionsClearEventArgs args)
     {
-        _logger.LogInformation("Message Reactions Cleared Event: {Guild}", args.Guild.Name);
+        _logger.LogDebug("Message Reactions Cleared Event: {Guild}", args.Guild.Name);
         return Task.CompletedTask;
     }
 
     public Task OnMessageReactionRemovedEmoji(DiscordClient client, MessageReactionRemoveEmojiEventArgs args)
     {
-        _logger.LogInformation("Message Reaction Removed Emoji Event: {Guild}", args.Guild.Name);
+        _logger.LogDebug("Message Reaction Removed Emoji Event: {Guild}", args.Guild.Name);
         return Task.CompletedTask;
     }
 }

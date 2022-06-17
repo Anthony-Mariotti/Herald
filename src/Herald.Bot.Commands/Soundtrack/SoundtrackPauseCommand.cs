@@ -1,6 +1,7 @@
 ﻿using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
-using Herald.Core.Exceptions;
+using Herald.Bot.Commands.Utilities;
+using Herald.Core.Application.Soundtracks.Commands.PauseTrack;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -20,38 +21,28 @@ public class SoundtrackPauseCommand : SoundtrackBaseCommand
     {
         _logger.LogInformation("Pause Command Executed by {User} in {Guild}", context.User.Username, context.Guild.Name);
 
-        try
-        {
-            await LoadLavalinkExtension(context);
-            await LoadLavalinkNode();
-        }
-        catch (LavalinkException e)
-        {
-            _logger.LogError("Failure loading lavalink node connection. {ErrorMessage}", e.Message);
-            await SendErrorConnectionResponse(context);
-            return;
-        }
-        
-        if (NodeConnection is null)
-        {
-            _logger.LogError("Failure loading lavalink node connection");
-            await SendErrorConnectionResponse(context);
-            return;
-        }
+        if (!await CommandPreCheckAsync(context)) return;
 
-        var connection = NodeConnection.GetGuildConnection(context.Guild);
-
-        if (connection is null || 
-            !connection.IsConnected || 
-            connection.CurrentState.CurrentTrack is null)
+        if (!GuildConnection.IsConnected || 
+            GuildConnection.CurrentState.CurrentTrack is null)
         {
             await context.CreateResponseAsync(new DiscordInteractionResponseBuilder().WithTitle("Not Connected")
                 .WithContent("Herald is not currently playing anything."));
             return;
         }
-
-        await connection.PauseAsync();
         
-        await context.CreateResponseAsync(new DiscordInteractionResponseBuilder().WithContent("TODO: Pause Command"));
+        await GuildConnection.PauseAsync();
+
+        await context.CreateResponseAsync(PauseEmbed(context.Member));
+        
+        await Mediator.Send(new PauseTrackCommand(GuildConnection.Guild.Id));
     }
+    
+    private static DiscordEmbed PauseEmbed(DiscordUser user)
+        =>  HeraldEmbedBuilder
+            .Information()
+            .WithAuthor("Music Paused")
+            .WithFooter($"Requested by {user.Username}#{user.Discriminator}", user.AvatarUrl)
+            .WithTimestamp(DateTime.Now)
+            .Build();
 }

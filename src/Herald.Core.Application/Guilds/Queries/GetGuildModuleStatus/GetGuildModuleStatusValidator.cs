@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
+using Herald.Core.Domain.ValueObjects.Modules;
 
-namespace Herald.Core.Application.Modules.Queries.GetModuleStatus;
+namespace Herald.Core.Application.Guilds.Queries.GetGuildModuleStatus;
 
 public class GetGuildModuleStatusValidator : AbstractValidator<GetGuildModuleStatusQuery>
 {
@@ -9,7 +10,11 @@ public class GetGuildModuleStatusValidator : AbstractValidator<GetGuildModuleSta
         RuleFor(x => x.GuildId)
             .NotEmpty().WithMessage("GuildId is required.");
 
-        RuleFor(x => x.ModuleName)
-            .NotEmpty().WithMessage("ModuleName is required");
+        RuleFor(x => x.Module)
+            .NotEmpty().WithMessage("ModuleName is required")
+            .Must(BeAnAvailableModule).WithMessage("The specified module is not supported.");
     }
+    
+    private static bool BeAnAvailableModule(HeraldModule module) =>
+        HeraldModule.HaveSupportFor(module);
 }

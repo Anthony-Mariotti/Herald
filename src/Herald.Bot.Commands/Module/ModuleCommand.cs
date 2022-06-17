@@ -1,8 +1,9 @@
 ﻿using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
+using Herald.Bot.Commands.Utilities;
 using Herald.Core.Application.Modules.Commands.ModuleDisable;
 using Herald.Core.Application.Modules.Commands.ModuleEnable;
-using Herald.Core.Application.Modules.Queries.GetModule;
+using Herald.Core.Domain.ValueObjects.Modules;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -39,23 +40,15 @@ public class ModuleCommand : ApplicationCommandModule
         [Option("module", "Module to enable")] GuildModules modules)
     {
         _logger.LogInformation("Module Enable Command Executed by {User} in {Guild}", context.Guild.Name, context.User.Username);
-        var module = await _mediator.Send(new GetModuleQuery(modules.ToString()));
-
-        if (module is null)
-        {
-            await context.CreateResponseAsync(
-                new DiscordInteractionResponseBuilder().WithContent($"{modules.ToString()} is not a valid module."));
-            return;
-        }
 
         await _mediator.Send(new ModuleEnableCommand
         {
             GuildId = context.Guild.Id,
-            ModuleId = module.Id
+            Module = HeraldModule.From(modules.ToString())
         });
 
         await context.CreateResponseAsync(
-            new DiscordInteractionResponseBuilder().WithContent($"The {module.Name} is now enabled!"));
+            HeraldEmbedBuilder.Success().WithTitle($"The {modules} is now enabled!").Build());
     }
 
     [SlashCommand("disable", "Disable a module on the server.")]
@@ -64,23 +57,14 @@ public class ModuleCommand : ApplicationCommandModule
         [Option("module", "Module to disable")] GuildModules modules)
     {
         _logger.LogInformation("Module Disable Command Executed by {User} in {Guild}", context.Guild.Name, context.User.Username);
-        
-        var module = await _mediator.Send(new GetModuleQuery(modules.ToString()));
 
-        if (module is null)
-        {
-            await context.CreateResponseAsync(
-                new DiscordInteractionResponseBuilder().WithContent($"{modules.ToString()} is not a valid module."));
-            return;
-        }
-        
         await _mediator.Send(new ModuleDisableCommand
         {
             GuildId = context.Guild.Id,
-            ModuleId = module.Id
+            Module = HeraldModule.From(modules.ToString())
         });
         
         await context.CreateResponseAsync(
-            new DiscordInteractionResponseBuilder().WithContent($"The {module.Name} is now disabled!"));
+            HeraldEmbedBuilder.Success().WithTitle($"The {modules} is now disabled!").Build());
     }
 }

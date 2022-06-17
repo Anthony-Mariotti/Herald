@@ -9,12 +9,12 @@ using Herald.Core.Infrastructure.Persistence;
 using Serilog;
 
 var host = Host.CreateDefaultBuilder(args)
-    .ConfigureServices(services =>
+    .ConfigureServices((context, services) =>
     {
         services.AddHostedService<Worker>();
         services.AddHeraldCore();
         services.AddHeraldApplicationServices();
-        services.AddHeraldInfrastructure();
+        services.AddHeraldInfrastructure(context.Configuration);
         
         services.AddHeraldEvents();
         services.AddHeraldCommands();
@@ -26,6 +26,7 @@ var host = Host.CreateDefaultBuilder(args)
 using (var scope = host.Services.CreateScope())
 {
     var initializer = scope.ServiceProvider.GetRequiredService<HeraldDbInitializer>();
+    await initializer.InitializeAsync();
     await initializer.SeedAsync();
 }
 

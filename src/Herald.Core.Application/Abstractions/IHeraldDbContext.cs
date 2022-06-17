@@ -1,15 +1,16 @@
 ﻿using Herald.Core.Domain.Entities.Guilds;
-using Herald.Core.Domain.Entities.Modules;
 using Herald.Core.Domain.Entities.Soundtracks;
-using MongoDB.Driver;
+using Microsoft.EntityFrameworkCore;
 
 namespace Herald.Core.Application.Abstractions;
 
 public interface IHeraldDbContext
 {
-    public IMongoCollection<GuildEntity> Guilds { get; }
+    public DbSet<GuildEntity> Guilds { get; }
     
-    public IMongoCollection<SoundtrackQueueEntity> SoundtrackQueues { get; }
-    
-    public IMongoCollection<ModuleEntity> Modules { get; }
+    public DbSet<QueueEntity> Queues { get; }
+
+    public Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default);
+
+    public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
