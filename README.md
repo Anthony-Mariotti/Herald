@@ -1,19 +1,20 @@
 ﻿# Herald the Discord Bot
 
-Heralds main purpose is to play music and play music well and reliable. Adding
-herald to your discord server will be available once the bot is fully developed.
+Herald's primary purpose is to play music and play music well and reliable. 
+Adding herald to your discord server will be available once the bot is fully 
+developed. Herald is also "designed" to be a discord bot with the CQS pattern 
+for multiple places of entry points where users can interact with the bot.
 
 The bot is still a work in progress and probably will be slow to develop as I
-have a full-time job and also stream on twitch
-([twitch.tv/amtraxtge](https://twitch.tv/amtraxtge)). I'll be trying to get as
-changes as I can, when I can.
+have a full-time job and stream on twitch ([twitch.tv/amtraxtge](https://twitch.tv/amtraxtge)).
+I'll be trying to get as many changes as I can, when I can.
 
 ## What does fully developed mean?
 
-Classifying something as "Fully Developed" would mean that there is no bugs / 
-additional features or issues that would need to be resolved. Herald will have
-it's first release once everything for the base bot is built and it runs
-with the up most reliability.
+Classifying something as "Fully Developed" would mean no bugs / additional 
+features or issues that would need to be resolved. Herald will have its first 
+release once everything for the base bot is built and runs with the highly 
+reliable.
 
 ### Herald Feature Tracker
 
@@ -28,9 +29,9 @@ with the up most reliability.
 - [ ] Contextual Logging
 - [x] Probably more features
 
-More features are to be added to this list in the future and hopefully will be
-checking more of them off as the features are built. Any feature ideas or
-suggestions can be left as a Issue on this repository.
+More features are to be added to this list in the future, and hopefully will
+be checking more of them off as the components are built. Any feature ideas or
+suggestions can be left as an Issue on this repository.
 
 # Contributing
 
