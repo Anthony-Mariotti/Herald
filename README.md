@@ -13,8 +13,8 @@ I'll be trying to get as many changes as I can, when I can.
 
 Classifying something as "Fully Developed" would mean no bugs / additional 
 features or issues that would need to be resolved. Herald will have its first 
-release once everything for the base bot is built and runs with the highly 
-reliable.
+release once everything for the base bot is built and runs with a highly 
+reliable nature.
 
 ### Herald Feature Tracker
 
