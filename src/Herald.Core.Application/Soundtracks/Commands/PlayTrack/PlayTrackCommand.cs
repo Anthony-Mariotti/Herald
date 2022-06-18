@@ -56,7 +56,6 @@ public class PlayTrackCommandHandler : IRequestHandler<PlayTrackCommand>
             _context.Queues.Add(queue);
             
             await _context.SaveChangesAsync(cancellationToken);
-            
             return Unit.Value;
         }
         

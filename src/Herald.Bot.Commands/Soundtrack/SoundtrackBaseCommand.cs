@@ -20,7 +20,7 @@ public class SoundtrackBaseCommand : ApplicationCommandModule
 
     protected LavalinkNodeConnection NodeConnection { get; set; } = default!;
 
-    protected LavalinkGuildConnection GuildConnection { get; set; } = default!;
+    protected LavalinkGuildConnection? GuildConnection { get; set; }
 
     protected SoundtrackBaseCommand(ILoggerFactory logger, ISender mediator)
     {

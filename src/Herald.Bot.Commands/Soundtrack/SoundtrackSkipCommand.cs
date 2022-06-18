@@ -63,7 +63,9 @@ public class SoundtrackSkipCommand : SoundtrackBaseCommand
         await Mediator.Send(new PlayTrackCommand
         {
             GuildId = context.Guild.Id,
-            Track = track
+            Track = track,
+            NotifyChannelId = context.Channel.Id,
+            RequestUserId = context.Member.Id
         });
     }
     

@@ -26,10 +26,9 @@ public class StopTrackCommandHandler : IRequestHandler<StopTrackCommand>
         if (queue is null)
             throw new NotFoundException(nameof(QueueEntity), request.GuildId);
 
-        queue.GetPlayingTrack()?.Stop();
+        queue.GetPlayingTrack()?.Ended();
 
         await _context.SaveChangesAsync(cancellationToken);
-        
         return Unit.Value;
     }
 }

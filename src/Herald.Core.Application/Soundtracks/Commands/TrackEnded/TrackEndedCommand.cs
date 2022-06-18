@@ -32,11 +32,10 @@ public class TrackEndedCommandHandler : IRequestHandler<TrackEndedCommand>
         {
             request.GuildId, request.TrackId
         });
-
-        // var filter = Builders<QueueEntity>.Filter
-        //     .Eq(x => x.GuildId, request.GuildId);
-
-        var queue = await _context.Queues.SingleOrDefaultAsync(x => x.GuildId.Equals(request.GuildId),
+        
+        var queue = await _context.Queues
+            .Include(x => x.Tracks)
+            .SingleOrDefaultAsync(x => x.GuildId.Equals(request.GuildId),
             cancellationToken);
 
         if (queue is null)
@@ -45,6 +44,7 @@ public class TrackEndedCommandHandler : IRequestHandler<TrackEndedCommand>
         queue.TrackEnded(request.TrackId);
         queue.AddDomainEvent(new TrackEndedEvent(request.GuildId, request.TrackId));
 
+        await _context.SaveChangesAsync(cancellationToken);
         return Unit.Value;
     }
 }

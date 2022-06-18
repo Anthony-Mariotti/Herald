@@ -26,11 +26,10 @@ public class PauseTrackCommandHandler : IRequestHandler<PauseTrackCommand>
         {
             request.GuildId,
         });
-
-        // var filter = builders<queueentity>.filter
-        //     .Eq(x => x.GuildId, request.GuildId);
-
-        var queue = await _context.Queues.SingleOrDefaultAsync(x => x.GuildId.Equals(request.GuildId),
+        
+        var queue = await _context.Queues
+            .Include(x => x.Tracks)
+            .SingleOrDefaultAsync(x => x.GuildId.Equals(request.GuildId),
             cancellationToken);
 
         if (queue is null) throw new NotFoundException(nameof(QueueEntity), request.GuildId);
@@ -38,7 +37,6 @@ public class PauseTrackCommandHandler : IRequestHandler<PauseTrackCommand>
         queue.GetPlayingTrack()?.Pause();
 
         await _context.SaveChangesAsync(cancellationToken);
-
         return Unit.Value;
     }
 }

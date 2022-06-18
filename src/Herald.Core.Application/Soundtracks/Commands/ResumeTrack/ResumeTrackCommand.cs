@@ -30,7 +30,6 @@ public class ResumeTrackCommandHandler : IRequestHandler<ResumeTrackCommand>
 
         // TODO: Add Track Resumed Domain Event
         await _context.SaveChangesAsync(cancellationToken);
-        
         return Unit.Value;
     }
 }

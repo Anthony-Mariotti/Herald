@@ -62,7 +62,6 @@ public class QueuedTrackValue : ValueObject
     public void Ended()
     {
         Played = true;
-        Paused = false;
         Stop();
     }
     

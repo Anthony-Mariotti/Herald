@@ -144,6 +144,12 @@ public class SoundtrackPlayCommand : SoundtrackBaseCommand
                 return;
             }
             
+            await Mediator.Send(new TrackEndedCommand
+            {
+                GuildId = connection.Guild.Id,
+                TrackId = args.Track.Identifier
+            });
+            
             await DisconnectAsync(connection);
         }
     }

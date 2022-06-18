@@ -27,7 +27,7 @@ public sealed class QueueEntity : BaseEntity, IAggregateRoot
 
     public QueuedTrackValue? GetNextTrack()
     {
-        var track = Tracks.FirstOrDefault(x => !x.Played);
+        var track = Tracks.FirstOrDefault(x => !x.Played && !x.Playing);
 
         return track;
     }
@@ -43,12 +43,23 @@ public sealed class QueueEntity : BaseEntity, IAggregateRoot
     {
         if (track is null) throw new ArgumentNullException(nameof(track));
 
+        var isExistingTrack = Tracks.Any(x => x.TrackId?.Equals(track.TrackId) ?? false);
+
+        if (isExistingTrack && track.Playing)
+        {
+            Parallel.ForEach(Tracks, x => x.Stop());
+            var existingTrack = Tracks.SingleOrDefault(x => x.TrackId?.Equals(track.TrackId) ?? false);
+            existingTrack?.Play();
+            return;
+        }
+
         if (track.Playing)
         {
             Parallel.ForEach(Tracks, x => x.Stop());
         }
         
         Tracks.Add(track);
+
         AuditHistory();
     }
 
@@ -67,7 +78,6 @@ public sealed class QueueEntity : BaseEntity, IAggregateRoot
 
     public void TrackEnded(string trackId)
     {
-        if (trackId == null) throw new ArgumentNullException(nameof(trackId));
         if (string.IsNullOrWhiteSpace(trackId))
             throw new ArgumentException("Value cannot be null or whitespace.", nameof(trackId));
 

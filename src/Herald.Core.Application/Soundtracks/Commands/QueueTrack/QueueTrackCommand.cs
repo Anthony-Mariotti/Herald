@@ -43,7 +43,9 @@ public class QueueTrackCommandHandler : IRequestHandler<QueueTrackCommand>
         // var filter = Builders<QueueEntity>.Filter
         //     .Eq(x => x.GuildId, request.GuildId);
 
-        var queue = await _context.Queues.SingleOrDefaultAsync(x => x.GuildId.Equals(request.GuildId),
+        var queue = await _context.Queues
+            .Include(x => x.Tracks)
+            .SingleOrDefaultAsync(x => x.GuildId.Equals(request.GuildId),
             cancellationToken);
 
         var track = Domain.ValueObjects.Soundtracks.QueuedTrackValue.Create(request.Track.Identifier, request.Track.Author, request.Track.Title,
@@ -57,7 +59,6 @@ public class QueueTrackCommandHandler : IRequestHandler<QueueTrackCommand>
             queue.AddDomainEvent(new TrackQueuedEvent(request.GuildId, track));
 
             await _context.SaveChangesAsync(cancellationToken);
-            
             return Unit.Value;
         }
         
