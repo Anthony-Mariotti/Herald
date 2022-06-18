@@ -1,4 +1,8 @@
 ﻿# Herald the Discord Bot
+[![License](https://img.shields.io/github/license/Anthony-Mariotti/Herald?label=License)](https://github.com/Anthony-Mariotti/Herald/blob/main/LICENSE)
+[![build](https://github.com/Anthony-Mariotti/Herald/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/Anthony-Mariotti/Herald/actions/workflows/build.yml)
+[![CodeQL](https://github.com/Anthony-Mariotti/Herald/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/Anthony-Mariotti/Herald/actions/workflows/codeql-analysis.yml)
+[![Discord](https://img.shields.io/discord/106210459287330816?color=7289da&label=Discord)](https://discord.gg/FFxaEQs)
 
 Herald's primary purpose is to play music and play music well and reliable. 
 Adding herald to your discord server will be available once the bot is fully 
