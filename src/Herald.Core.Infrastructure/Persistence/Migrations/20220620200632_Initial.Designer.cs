@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Herald.Core.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(HeraldDbContext))]
-    [Migration("20220617183040_Initial")]
+    [Migration("20220620200632_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -99,8 +99,24 @@ namespace Herald.Core.Infrastructure.Persistence.Migrations
                     SqlServerPropertyBuilderExtensions.UseHiLo(b.Property<long>("Id"), "QueuedTracksSeq");
 
                     b.Property<string>("Author")
+                        .IsRequired()
                         .HasMaxLength(160)
                         .HasColumnType("nvarchar(160)");
+
+                    b.Property<TimeSpan>("Duration")
+                        .HasColumnType("time");
+
+                    b.Property<string>("Encoded")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Identifier")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<bool>("Livestream")
+                        .HasColumnType("bit");
 
                     b.Property<decimal>("NotifyChannelId")
                         .HasColumnType("decimal(20,0)");
@@ -114,25 +130,29 @@ namespace Herald.Core.Infrastructure.Persistence.Migrations
                     b.Property<bool>("Playing")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Provider")
+                        .IsRequired()
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
+
                     b.Property<long?>("QueueId")
                         .HasColumnType("bigint");
 
                     b.Property<decimal>("RequestUserId")
                         .HasColumnType("decimal(20,0)");
 
-                    b.Property<string>("Title")
+                    b.Property<bool>("Seekable")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Source")
+                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<string>("TrackId")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("TrackString")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Uri")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.HasKey("Id");
 

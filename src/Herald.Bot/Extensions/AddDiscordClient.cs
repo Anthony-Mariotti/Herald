@@ -1,7 +1,6 @@
 ﻿using DSharpPlus;
 using DSharpPlus.SlashCommands;
 using Herald.Bot.Commands;
-using Herald.Core.Configuration;
 using Herald.Bot.Events.Abstractions.Handlers;
 
 namespace Herald.Bot.Extensions;
@@ -12,18 +11,8 @@ public static partial class HeraldBotExtensions
         => services
             .AddSingleton(provider =>
             {
-                var config = provider.GetRequiredService<HeraldConfig>();
-                var loggingFactory = provider.GetRequiredService<ILoggerFactory>();
-               
-                var discordConfiguration = new DiscordConfiguration
-                {
-                    Token = config.DiscordKey,
-                    TokenType = TokenType.Bot,
-                    LoggerFactory = loggingFactory,
-                    Intents = DiscordIntents.AllUnprivileged
-                };
-               
-                var client = new DiscordClient(discordConfiguration);
+                var config = provider.GetRequiredService<DiscordConfiguration>();
+                var client = new DiscordClient(config);
                 
                 RegisterDiscordGuildEvents(provider, ref client);
                 RegisterDiscordChannelEvents(provider, ref client);
@@ -32,7 +21,7 @@ public static partial class HeraldBotExtensions
                 
                 return client;
             });
-    
+
     private static void RegisterDiscordChannelEvents(IServiceProvider provider, ref DiscordClient client)
     {
         var channelHandler = provider.GetRequiredService<IChannelEventHandler>();

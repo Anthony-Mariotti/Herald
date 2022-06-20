@@ -43,12 +43,12 @@ public sealed class QueueEntity : BaseEntity, IAggregateRoot
     {
         if (track is null) throw new ArgumentNullException(nameof(track));
 
-        var isExistingTrack = Tracks.Any(x => x.TrackId?.Equals(track.TrackId) ?? false);
+        var isExistingTrack = Tracks.Any(x => x.Identifier?.Equals(track.Identifier) ?? false);
 
         if (isExistingTrack && track.Playing)
         {
             Parallel.ForEach(Tracks, x => x.Stop());
-            var existingTrack = Tracks.SingleOrDefault(x => x.TrackId?.Equals(track.TrackId) ?? false);
+            var existingTrack = Tracks.SingleOrDefault(x => x.Identifier?.Equals(track.Identifier) ?? false);
             existingTrack?.Play();
             return;
         }
@@ -69,7 +69,7 @@ public sealed class QueueEntity : BaseEntity, IAggregateRoot
         if (string.IsNullOrWhiteSpace(trackId))
             throw new ArgumentException("Value cannot be null or whitespace.", nameof(trackId));
 
-        var track = Tracks.SingleOrDefault(x => x.TrackId?.Equals(trackId) ?? false);
+        var track = Tracks.SingleOrDefault(x => x.Identifier?.Equals(trackId) ?? false);
 
         if (track is null) return;
         
@@ -81,7 +81,7 @@ public sealed class QueueEntity : BaseEntity, IAggregateRoot
         if (string.IsNullOrWhiteSpace(trackId))
             throw new ArgumentException("Value cannot be null or whitespace.", nameof(trackId));
 
-        var track = Tracks.SingleOrDefault(x => x.TrackId?.Equals(trackId) ?? false);
+        var track = Tracks.SingleOrDefault(x => x.Identifier?.Equals(trackId) ?? false);
 
         track?.Ended();
         AuditHistory();

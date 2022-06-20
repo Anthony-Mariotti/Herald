@@ -1,7 +1,7 @@
 ﻿using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
 using Herald.Bot.Commands.Utilities;
-using Herald.Core.Application.Soundtracks.Commands.StopTrack;
+using Lavalink4NET;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -11,8 +11,8 @@ public class SoundtrackStopCommand : SoundtrackBaseCommand
 {
     private readonly ILogger<SoundtrackStopCommand> _logger;
 
-    public SoundtrackStopCommand(ILoggerFactory logger, ISender mediator)
-        : base(logger, mediator)
+    public SoundtrackStopCommand(ILoggerFactory logger, IAudioService audio, ISender mediator)
+        : base(logger, audio, mediator)
     {
         _logger = logger.CreateLogger<SoundtrackStopCommand>();
     }
@@ -25,21 +25,11 @@ public class SoundtrackStopCommand : SoundtrackBaseCommand
         if (!await CommandPreCheckAsync(context))
             return;
 
-        if (!GuildConnection.IsConnected ||
-            GuildConnection.CurrentState.CurrentTrack is null)
-        {
-            await context.CreateResponseAsync(
-                new DiscordInteractionResponseBuilder().WithContent(
-                    "I'm not currently connected to any voice channel."));
-            return;
-        }
-        
-        await GuildConnection.StopAsync();
-        await GuildConnection.DisconnectAsync();
+        var player = await GetPlayerAsync(context);
 
-        await context.CreateResponseAsync(StopEmbed(context.Member));
+        await player.StopAsync(true);
         
-        await Mediator.Send(new StopTrackCommand(GuildConnection.Guild.Id));
+        await context.CreateResponseAsync(StopEmbed(context.Member));
     }
     
     private static DiscordEmbed StopEmbed(DiscordUser user)

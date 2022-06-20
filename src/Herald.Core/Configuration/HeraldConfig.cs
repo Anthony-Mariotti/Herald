@@ -1,5 +1,4 @@
-﻿using DSharpPlus.Lavalink;
-using DSharpPlus.Net;
+﻿using Lavalink4NET;
 
 namespace Herald.Core.Configuration;
 
@@ -7,18 +6,15 @@ public class HeraldConfig
 {
     public string? DiscordKey { get; set; }
 
-    public LavalinkConfiguration Lavalink { get; set; } = new LavalinkConfiguration
+    public LavalinkNodeOptions Lavalink { get; set; } = new LavalinkNodeOptions
     {
-        RestEndpoint = new ConnectionEndpoint
-        {
-            Hostname = "localhost",
-            Port = 2333
-        },
-        SocketEndpoint = new ConnectionEndpoint
-        {
-            Hostname = "localhost",
-            Port = 2333
-        },
-        Password = "youshallnotpass"
+        RestUri = "http://localhost:2333/",
+        WebSocketUri = "ws://localhost:2333/",
+        Password = "youshallnotpass",
+        DisconnectOnStop = true,
+        AllowResuming = true,
+        UserAgent = "Herald/1.0.0.0-alpha",
+        Label = "local",
+        ReconnectStrategy = ReconnectStrategies.DefaultStrategy
     };
 }

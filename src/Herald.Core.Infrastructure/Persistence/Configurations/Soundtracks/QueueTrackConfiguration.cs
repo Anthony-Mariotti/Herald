@@ -19,16 +19,42 @@ public class QueueTrackConfiguration : IEntityTypeConfiguration<QueuedTrackValue
         builder.Property("Id")
             .UseHiLo("QueuedTracksSeq");
 
-        builder.Property(p => p.TrackId)
+        builder.Property(p => p.Identifier)
+            .IsRequired()
             .HasMaxLength(20);
 
+        builder.Property(p => p.Author)
+            .IsRequired()
+            .HasMaxLength(160);
+        
         builder.Property(p => p.Title)
+            .IsRequired()
             .HasMaxLength(200);
 
-        builder.Property(p => p.Author)
-            .HasMaxLength(160);
+        builder.Property(p => p.Duration)
+            .IsRequired();
+
+        builder.Property(p => p.Livestream)
+            .IsRequired();
+
+        builder.Property(p => p.Seekable)
+            .IsRequired();
+        
+        builder.Property(p => p.Provider)
+            .IsRequired()
+            .HasMaxLength(15);
 
         builder.Property(p => p.NotifyChannelId)
+            .IsRequired();
+        
+        builder.Property(p => p.RequestUserId)
+            .IsRequired();
+        
+        builder.Property(p => p.Source)
+            .IsRequired()
+            .HasMaxLength(200);
+        
+        builder.Property(p => p.Encoded)
             .IsRequired();
 
         builder.Property(p => p.Paused)

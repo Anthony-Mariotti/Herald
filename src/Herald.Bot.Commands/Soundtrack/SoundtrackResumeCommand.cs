@@ -1,7 +1,7 @@
 ﻿using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
 using Herald.Bot.Commands.Utilities;
-using Herald.Core.Application.Soundtracks.Commands.ResumeTrack;
+using Lavalink4NET;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -11,8 +11,8 @@ public class SoundtrackResumeCommand : SoundtrackBaseCommand
 {
     private readonly ILogger<SoundtrackResumeCommand> _logger;
     
-    public SoundtrackResumeCommand(ILoggerFactory logger, ISender mediator)
-        : base(logger, mediator)
+    public SoundtrackResumeCommand(ILoggerFactory logger, IAudioService audio, ISender mediator)
+        : base(logger, audio, mediator)
     {
         _logger = logger.CreateLogger<SoundtrackResumeCommand>();
     }
@@ -24,21 +24,12 @@ public class SoundtrackResumeCommand : SoundtrackBaseCommand
 
         if (!await CommandPreCheckAsync(context))
             return;
-        
-        if (!GuildConnection.IsConnected ||
-            GuildConnection.CurrentState.CurrentTrack is null)
-        {
-            await context.CreateResponseAsync(
-                new DiscordInteractionResponseBuilder().WithContent(
-                    "I'm not currently connected to any voice channel."));
-            return;
-        }
 
-        await GuildConnection.ResumeAsync();
+        var player = await GetPlayerAsync(context);
+
+        await player.ResumeAsync();
 
         await context.CreateResponseAsync(ResumeEmbed(context.Member));
-        
-        await Mediator.Send(new ResumeTrackCommand(GuildConnection.Guild.Id));
     }
     
     private static DiscordEmbed ResumeEmbed(DiscordUser user)
