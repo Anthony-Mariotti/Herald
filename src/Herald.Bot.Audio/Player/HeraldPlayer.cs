@@ -3,8 +3,9 @@ using Herald.Core.Application.Soundtracks.Commands.PlayTrack;
 using Herald.Core.Application.Soundtracks.Commands.QueueTrack;
 using Herald.Core.Application.Soundtracks.Commands.ResumeTrack;
 using Herald.Core.Application.Soundtracks.Commands.StopTrack;
+using Herald.Core.Application.Soundtracks.Commands.TrackEnded;
 using Herald.Core.Application.Soundtracks.Queries.GetNextTrack;
-using Herald.Core.Application.Soundtracks.Queries.HasQueuedTrackQuery;
+using Herald.Core.Application.Soundtracks.Queries.HasQueuedTrack;
 using Herald.Core.Domain.ValueObjects.Soundtracks;
 using Lavalink4NET.Events;
 using Lavalink4NET.Player;
@@ -79,6 +80,7 @@ public sealed class HeraldPlayer : LavalinkPlayer
 
         if (nextTrack is not null)
         {
+            
             await PlayAsync(nextTrack.GetLavalinkTrack(), false,
                 requestUserId ?? nextTrack.RequestUserId,
                 notifyChannelId ?? nextTrack.NotifyChannelId);
@@ -124,15 +126,26 @@ public sealed class HeraldPlayer : LavalinkPlayer
         } catch (InvalidOperationException) { }
     }
 
-    public override Task OnTrackEndAsync(TrackEndEventArgs eventArgs)
+    public override async Task OnTrackEndAsync(TrackEndEventArgs eventArgs)
     {
+        EnsureNotDestroyed();
+        EnsureConnected();
+
+        await _mediator.Send(new TrackEndedCommand
+        {
+            GuildId = GuildId,
+            Identifier = CurrentTrack?.TrackIdentifier!
+        });
+        
         if (eventArgs.MayStartNext)
         {
-            return SkipAsync();
+            await SkipAsync();
+            return;
         }
 
-        return DisconnectOnStop
-            ? DisconnectAsync()
-            : Task.CompletedTask;
+        if (DisconnectOnStop)
+        {
+            await DisconnectAsync();
+        }
     }
 }

@@ -1,10 +1,8 @@
 ﻿using Herald.Core.Application.Abstractions;
-using Herald.Core.Application.Exceptions;
-using Herald.Core.Domain.Entities.Soundtracks;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Herald.Core.Application.Soundtracks.Queries.HasQueuedTrackQuery;
+namespace Herald.Core.Application.Soundtracks.Queries.HasQueuedTrack;
 
 public record HasQueuedTrackQuery(ulong GuildId) : IRequest<bool>;
 
@@ -23,9 +21,7 @@ public class HasQueuedTrackQueryHandler : IRequestHandler<HasQueuedTrackQuery, b
             .Include(x => x.Tracks)
             .SingleOrDefaultAsync(cancellationToken);
 
-        if (queue is null)
-            throw new NotFoundException(nameof(QueueEntity), request.GuildId);
-
-        return queue.Tracks.Any(x => !x.Played && !x.Playing && !x.Paused);
+        return queue is not null && 
+               queue.Tracks.Any(x => !x.Played && !x.Playing && !x.Paused);
     }
 }
