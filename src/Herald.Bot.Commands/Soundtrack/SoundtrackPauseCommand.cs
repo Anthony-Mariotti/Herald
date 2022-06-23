@@ -1,7 +1,7 @@
 ﻿using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
 using Herald.Bot.Commands.Utilities;
-using Herald.Core.Application.Soundtracks.Commands.PauseTrack;
+using Lavalink4NET;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -11,7 +11,8 @@ public class SoundtrackPauseCommand : SoundtrackBaseCommand
 {
     private readonly ILogger<SoundtrackPauseCommand> _logger;
 
-    public SoundtrackPauseCommand(ILoggerFactory logger, ISender mediator) : base(logger, mediator)
+    public SoundtrackPauseCommand(ILoggerFactory logger, IAudioService audio, ISender mediator)
+        : base(logger, audio, mediator)
     {
         _logger = logger.CreateLogger<SoundtrackPauseCommand>();
     }
@@ -23,19 +24,11 @@ public class SoundtrackPauseCommand : SoundtrackBaseCommand
 
         if (!await CommandPreCheckAsync(context)) return;
 
-        if (!GuildConnection.IsConnected || 
-            GuildConnection.CurrentState.CurrentTrack is null)
-        {
-            await context.CreateResponseAsync(new DiscordInteractionResponseBuilder().WithTitle("Not Connected")
-                .WithContent("Herald is not currently playing anything."));
-            return;
-        }
-        
-        await GuildConnection.PauseAsync();
+        var player = await GetPlayerAsync(context);
+
+        await player.PauseAsync();
 
         await context.CreateResponseAsync(PauseEmbed(context.Member));
-        
-        await Mediator.Send(new PauseTrackCommand(GuildConnection.Guild.Id));
     }
     
     private static DiscordEmbed PauseEmbed(DiscordUser user)

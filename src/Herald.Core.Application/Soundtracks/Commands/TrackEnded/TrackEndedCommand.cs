@@ -12,7 +12,10 @@ public record TrackEndedCommand : IRequest
 {
     public ulong GuildId { get; init; }
 
-    public string TrackId { get; init; } = default!;
+    /// <summary>
+    /// Lavalink4NET TrackIdentifier
+    /// </summary>
+    public string Identifier { get; init; } = default!;
 }
 
 public class TrackEndedCommandHandler : IRequestHandler<TrackEndedCommand>
@@ -30,7 +33,7 @@ public class TrackEndedCommandHandler : IRequestHandler<TrackEndedCommand>
     {
         _logger.LogDebug("Handling {Command}: {@Request}", nameof(TrackEndedCommand), new
         {
-            request.GuildId, request.TrackId
+            request.GuildId, TrackId = request.Identifier
         });
         
         var queue = await _context.Queues
@@ -41,8 +44,8 @@ public class TrackEndedCommandHandler : IRequestHandler<TrackEndedCommand>
         if (queue is null)
             throw new NotFoundException(nameof(QueueEntity), request.GuildId);
 
-        queue.TrackEnded(request.TrackId);
-        queue.AddDomainEvent(new TrackEndedEvent(request.GuildId, request.TrackId));
+        queue.TrackEnded(request.Identifier);
+        queue.AddDomainEvent(new TrackEndedEvent(request.GuildId, request.Identifier));
 
         await _context.SaveChangesAsync(cancellationToken);
         return Unit.Value;

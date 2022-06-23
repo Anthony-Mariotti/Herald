@@ -1,7 +1,6 @@
 using System.Reflection;
 using DSharpPlus;
-using DSharpPlus.Lavalink;
-using Herald.Core.Configuration;
+using Lavalink4NET;
 
 namespace Herald.Bot;
 
@@ -12,34 +11,31 @@ public class Worker : BackgroundService
     private readonly ILogger<Worker> _logger;
 
     private readonly DiscordClient _discord;
-
-    private readonly HeraldConfig _config;
     
-    public Worker(ILogger<Worker> logger, DiscordClient discord, HeraldConfig config)
+    private readonly IAudioService _audioService;
+
+    public Worker(ILogger<Worker> logger,DiscordClient discord, IAudioService audioService)
     {
         var assembly = Assembly.GetExecutingAssembly();
         _version = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "1.0.0.0";
         _logger = logger;
         _discord = discord;
-        _config = config;
+        _audioService = audioService;
     }
 
     public override Task StartAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("Starting Herald v{Version}", _version);
 
+        _discord.Ready += (_, _) => _audioService.InitializeAsync(); 
+        
         return base.StartAsync(cancellationToken);
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var lavalink = _discord.UseLavalink();
-        
         _logger.LogInformation("Connecting to Discord");
         await _discord.ConnectAsync();
-        
-        _logger.LogInformation("Connecting to Lavalink");
-        await lavalink.ConnectAsync(_config.Lavalink);
         
         _logger.LogInformation("Herald is now connected and ready");
     }

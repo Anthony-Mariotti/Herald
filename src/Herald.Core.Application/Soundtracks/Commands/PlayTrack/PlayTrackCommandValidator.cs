@@ -1,8 +1,8 @@
 ﻿using FluentValidation;
 
-namespace Herald.Core.Application.Soundtracks.Commands.PlayTrackCommand;
+namespace Herald.Core.Application.Soundtracks.Commands.PlayTrack;
 
-public class PlayTrackCommandValidator : AbstractValidator<PlayTrackCommand>
+public class PlayTrackCommandValidator : AbstractValidator<PlayTrack.PlayTrackCommand>
 {
     public PlayTrackCommandValidator()
     {

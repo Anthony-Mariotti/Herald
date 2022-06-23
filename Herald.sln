@@ -22,6 +22,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Herald.Core.Application.Uni
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Herald.Core.Domain.UnitTests", "tests\Herald.Core.Domain.UnitTests\Herald.Core.Domain.UnitTests.csproj", "{757B8216-EBCA-4A5E-A9A1-CF2BFD9923F9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Herald.Bot.Audio", "src\Herald.Bot.Audio\Herald.Bot.Audio.csproj", "{91408B8E-16EC-4AC3-BD00-E5A68DB04C49}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -68,6 +70,10 @@ Global
 		{757B8216-EBCA-4A5E-A9A1-CF2BFD9923F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{757B8216-EBCA-4A5E-A9A1-CF2BFD9923F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{757B8216-EBCA-4A5E-A9A1-CF2BFD9923F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91408B8E-16EC-4AC3-BD00-E5A68DB04C49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91408B8E-16EC-4AC3-BD00-E5A68DB04C49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91408B8E-16EC-4AC3-BD00-E5A68DB04C49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91408B8E-16EC-4AC3-BD00-E5A68DB04C49}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{81B6033D-F24B-4B6A-A0F0-A91CF452B8C9} = {DE38BDEC-F9EF-4EDF-8C4B-CAF155C45D25}
