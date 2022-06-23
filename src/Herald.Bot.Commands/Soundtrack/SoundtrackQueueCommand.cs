@@ -84,7 +84,7 @@ public class SoundtrackQueueCommand : SoundtrackBaseCommand
             .WithAuthor("Added track to queue!", iconUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Eo_circle_green_checkmark.svg/2048px-Eo_circle_green_checkmark.svg.png")
             .WithTitle(track.Title)
             .WithUrl(track.Source)
-            .WithThumbnail($"https://i.ytimg.com/vi/{track.Identifier}/hq720.jpg")
+            .WithThumbnail($"https/img.youtube.com/vi/{track.Identifier}/0.jpg")
             .WithFooter($"Requested by {user.Username}#{user.Discriminator}", user.AvatarUrl)
             .WithTimestamp(DateTime.Now)
             .Build();
@@ -95,7 +95,7 @@ public class SoundtrackQueueCommand : SoundtrackBaseCommand
             .WithAuthor("Playing from Queue", iconUrl: "https://play-lh.googleusercontent.com/SqMGe5wxL6HfT03WNGepMvGxXyS9EOFm4V7NzLCofFxPwFVJqRavYe5-EPQV3WAW7DU")
             .WithTitle(track.Title)
             .WithUrl(track.Source)
-            .WithImageUrl($"https://i.ytimg.com/vi/{track.Identifier}/hq720.jpg")
+            .WithImageUrl($"https/img.youtube.com/vi/{track.Identifier}/0.jpg")
             .WithFooter($"Requested by User", "https://cdn.discordapp.com/avatars/105522177406672896/0ca616626c74ae17f3a901ef45dab1bf.webp?size=32")
             .WithTimestamp(DateTime.Now)
             .Build();

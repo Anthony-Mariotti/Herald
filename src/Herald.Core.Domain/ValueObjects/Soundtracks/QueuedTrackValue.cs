@@ -1,10 +1,13 @@
-﻿using Lavalink4NET.Player;
+﻿using Herald.Core.Domain.Enums;
+using Lavalink4NET.Player;
 
 namespace Herald.Core.Domain.ValueObjects.Soundtracks;
 
 public class QueuedTrackValue : ValueObject
 {
     public string Identifier { get; set; }
+    
+    public TrackStatus Status { get; set; }
     
     public string Author { get; set; }
     
@@ -26,15 +29,9 @@ public class QueuedTrackValue : ValueObject
     
     public string Encoded { get; set; }
 
-    public bool Playing { get; set; } = false;
-
-    public bool Paused { get; set; } = false;
-
-    public bool Played { get; set; } = false;
-    
     private QueuedTrackValue(string identifier, string author, string title, TimeSpan duration, bool livestream,
         bool seekable, string provider, ulong notifyChannelId, ulong requestUserId, string source, string encoded,
-        bool playing)
+        TrackStatus status)
     {
         Identifier = identifier;
         Author = author;
@@ -47,14 +44,14 @@ public class QueuedTrackValue : ValueObject
         RequestUserId = requestUserId;
         Source = source;
         Encoded = encoded;
-        Playing = playing;
+        Status = status;
     }
     
     public static QueuedTrackValue Create(string identifier, string author, string title, TimeSpan duration,
         bool livestream, bool seekable, string provider, ulong notifyChannelId, ulong requestUserId, string source,
-        string encoded, bool playing = false) =>
+        string encoded, TrackStatus status) =>
         new(identifier, author, title, duration, livestream, seekable, provider, notifyChannelId, requestUserId,
-            source, encoded, playing);
+            source, encoded, status);
 
     /// <summary>
     /// Conversion method from <see cref="LavalinkTrack"/> to <see cref="QueuedTrackValue"/>
@@ -62,37 +59,19 @@ public class QueuedTrackValue : ValueObject
     /// <param name="track">The <see cref="LavalinkTrack"/> to be converted.</param>
     /// <param name="notifyChannelId">The channel where to reply when the track is played.</param>
     /// <param name="requestUserId">The user who requested the track.</param>
-    /// <param name="playing">Whether or not the track is currently playing.</param>
+    /// <param name="status">The <see cref="TrackStatus"/> of the track that is being created.</param>
     /// <returns>Populated <see cref="QueuedTrackValue"/></returns>
     public static QueuedTrackValue Create(LavalinkTrack track, ulong notifyChannelId, ulong requestUserId,
-        bool playing = false)
+        TrackStatus status)
         => Create(track.TrackIdentifier, track.Author, track.Title, track.Duration, track.IsLiveStream,
-            track.IsSeekable, track.Provider.ToString(), notifyChannelId, requestUserId, track.Source,
-            track.Identifier, playing);
+            track.IsSeekable, track.Provider.ToString(), notifyChannelId, requestUserId, track.Source!,
+            track.Identifier, status);
 
-    public void Pause()
-    {
-        Playing = false;
-        Paused = true;
-    }
+    public void Pause() => Status = TrackStatus.Paused;
 
-    public void Play()
-    {
-        Playing = true;
-        Paused = false;
-    }
+    public void Play() => Status = TrackStatus.Playing;
 
-    public void Stop()
-    {
-        Playing = false;
-        Paused = false;
-    }
-
-    public void Ended()
-    {
-        Played = true;
-        Stop();
-    }
+    public void Ended() => Status = TrackStatus.Played;
 
     protected override IEnumerable<object?> GetEqualityComponents()
     {

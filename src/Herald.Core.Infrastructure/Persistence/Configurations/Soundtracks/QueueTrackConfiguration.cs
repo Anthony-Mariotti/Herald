@@ -1,4 +1,5 @@
-﻿using Herald.Core.Domain.ValueObjects.Soundtracks;
+﻿using Herald.Core.Domain.Enums;
+using Herald.Core.Domain.ValueObjects.Soundtracks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -22,6 +23,12 @@ public class QueueTrackConfiguration : IEntityTypeConfiguration<QueuedTrackValue
         builder.Property(p => p.Identifier)
             .IsRequired()
             .HasMaxLength(20);
+
+        builder.Property(p => p.Status)
+            .IsRequired()
+            .HasConversion(
+                v => v.Value,
+                v => TrackStatus.FromValue(v));
 
         builder.Property(p => p.Author)
             .IsRequired()
@@ -55,15 +62,6 @@ public class QueueTrackConfiguration : IEntityTypeConfiguration<QueuedTrackValue
             .HasMaxLength(200);
         
         builder.Property(p => p.Encoded)
-            .IsRequired();
-
-        builder.Property(p => p.Paused)
-            .IsRequired();
-
-        builder.Property(p => p.Playing)
-            .IsRequired();
-
-        builder.Property(p => p.Played)
             .IsRequired();
     }
 }

@@ -70,6 +70,7 @@ namespace Herald.Core.Infrastructure.Persistence.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false),
                     Identifier = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
                     Author = table.Column<string>(type: "nvarchar(160)", maxLength: 160, nullable: false),
                     Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Duration = table.Column<TimeSpan>(type: "time", nullable: false),
@@ -80,9 +81,6 @@ namespace Herald.Core.Infrastructure.Persistence.Migrations
                     RequestUserId = table.Column<decimal>(type: "decimal(20,0)", nullable: false),
                     Source = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Encoded = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Playing = table.Column<bool>(type: "bit", nullable: false),
-                    Paused = table.Column<bool>(type: "bit", nullable: false),
-                    Played = table.Column<bool>(type: "bit", nullable: false),
                     QueueId = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>

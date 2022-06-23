@@ -45,7 +45,7 @@ public class SoundtrackSkipCommand : SoundtrackBaseCommand
             .WithAuthor("Now Playing", iconUrl: "https://play-lh.googleusercontent.com/SqMGe5wxL6HfT03WNGepMvGxXyS9EOFm4V7NzLCofFxPwFVJqRavYe5-EPQV3WAW7DU")
             .WithTitle(track.Title)
             .WithUrl(track.Source)
-            .WithImageUrl($"https://i.ytimg.com/vi/{track.Identifier}/hq720.jpg")
+            .WithImageUrl($"https/img.youtube.com/vi/{track.Identifier}/0.jpg")
             .WithFooter($"Requested by {user.Username}#{user.Discriminator}", user.AvatarUrl)
             .WithTimestamp(DateTime.Now)
             .Build();

@@ -1,4 +1,5 @@
 ﻿using Herald.Core.Domain.Common.Extensions;
+using Herald.Core.Domain.Enums;
 using Herald.Core.Domain.ValueObjects.Soundtracks;
 
 namespace Herald.Core.Domain.Entities.Soundtracks;
@@ -20,22 +21,20 @@ public sealed class QueueEntity : BaseEntity, IAggregateRoot
 
     public QueuedTrackValue? GetPlayingTrack()
     {
-        var track = Tracks.SingleOrDefault(x => x.Playing);
-
+        var track = Tracks.SingleOrDefault(x => x.Status.Equals(TrackStatus.Playing));
         return track;
     }
 
     public QueuedTrackValue? GetNextTrack()
     {
-        var track = Tracks.FirstOrDefault(x => !x.Played && !x.Playing);
-
+        var track = Tracks.FirstOrDefault(x => x.Status.Equals(TrackStatus.Queued));
         return track;
     }
 
     public QueuedTrackValue? GetPausedTrack()
     {
-        var track = Tracks.SingleOrDefault(x => x.Paused);
-
+        var track = Tracks.SingleOrDefault(x =>
+            x.Status.Equals(TrackStatus.Paused));
         return track;
     }
 
@@ -43,23 +42,25 @@ public sealed class QueueEntity : BaseEntity, IAggregateRoot
     {
         if (track is null) throw new ArgumentNullException(nameof(track));
 
-        var isExistingTrack = Tracks.Any(x => x.Identifier?.Equals(track.Identifier) ?? false);
-
-        if (isExistingTrack && track.Playing)
+        if (track.Status.Equals(TrackStatus.Playing))
         {
-            Parallel.ForEach(Tracks, x => x.Stop());
-            var existingTrack = Tracks.SingleOrDefault(x => x.Identifier?.Equals(track.Identifier) ?? false);
-            existingTrack?.Play();
+            foreach (var oldTrack in Tracks.Where(x => !x.Status.Equals(TrackStatus.Queued)))
+            {
+                oldTrack.Ended();
+            }
+        }
+
+        bool ExistingTrack(QueuedTrackValue input) =>
+            input.Identifier.Equals(track.Identifier);
+        
+        if (Tracks.Any(ExistingTrack))
+        {
+            Tracks.Single(ExistingTrack).Play();
+            AuditHistory();
             return;
         }
 
-        if (track.Playing)
-        {
-            Parallel.ForEach(Tracks, x => x.Stop());
-        }
-        
         Tracks.Add(track);
-
         AuditHistory();
     }
 
@@ -69,7 +70,7 @@ public sealed class QueueEntity : BaseEntity, IAggregateRoot
         if (string.IsNullOrWhiteSpace(trackId))
             throw new ArgumentException("Value cannot be null or whitespace.", nameof(trackId));
 
-        var track = Tracks.SingleOrDefault(x => x.Identifier?.Equals(trackId) ?? false);
+        var track = Tracks.SingleOrDefault(x => x.Identifier.Equals(trackId));
 
         if (track is null) return;
         
@@ -81,7 +82,9 @@ public sealed class QueueEntity : BaseEntity, IAggregateRoot
         if (string.IsNullOrWhiteSpace(trackId))
             throw new ArgumentException("Value cannot be null or whitespace.", nameof(trackId));
 
-        var track = Tracks.SingleOrDefault(x => x.Identifier?.Equals(trackId) ?? false);
+        var track = Tracks.SingleOrDefault(x =>
+            x.Identifier.Equals(trackId) && 
+            x.Status.Equals(TrackStatus.Playing));
 
         track?.Ended();
         AuditHistory();
@@ -89,13 +92,16 @@ public sealed class QueueEntity : BaseEntity, IAggregateRoot
 
     private void AuditHistory()
     {
-        var tracks = Tracks.Where(x => x.Played).ToList();
+        bool PlayedFunc(QueuedTrackValue x) => x.Status.Equals(TrackStatus.Played);
+
+        var tracks = Tracks.Where(PlayedFunc).ToList();
 
         if (!tracks.Any()) return;
 
-        if (tracks.Count > 15)
+        var playedCount = tracks.Count(PlayedFunc);
+        if (playedCount > 15)
         {
-            tracks.RemoveLast(tracks.Count - 15);
+            tracks.RemoveLast(PlayedFunc, playedCount - 15);
         }
     }
 }

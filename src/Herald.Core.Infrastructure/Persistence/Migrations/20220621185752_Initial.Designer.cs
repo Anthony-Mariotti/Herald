@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Herald.Core.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(HeraldDbContext))]
-    [Migration("20220620200632_Initial")]
+    [Migration("20220621185752_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -121,15 +121,6 @@ namespace Herald.Core.Infrastructure.Persistence.Migrations
                     b.Property<decimal>("NotifyChannelId")
                         .HasColumnType("decimal(20,0)");
 
-                    b.Property<bool>("Paused")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("Played")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("Playing")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Provider")
                         .IsRequired()
                         .HasMaxLength(15)
@@ -148,6 +139,9 @@ namespace Herald.Core.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()

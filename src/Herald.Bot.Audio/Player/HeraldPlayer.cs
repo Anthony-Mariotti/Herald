@@ -6,6 +6,7 @@ using Herald.Core.Application.Soundtracks.Commands.StopTrack;
 using Herald.Core.Application.Soundtracks.Commands.TrackEnded;
 using Herald.Core.Application.Soundtracks.Queries.GetNextTrack;
 using Herald.Core.Application.Soundtracks.Queries.HasQueuedTrack;
+using Herald.Core.Domain.Enums;
 using Herald.Core.Domain.ValueObjects.Soundtracks;
 using Lavalink4NET.Events;
 using Lavalink4NET.Player;
@@ -42,7 +43,7 @@ public sealed class HeraldPlayer : LavalinkPlayer
         await _mediator.Send(new PlayTrackCommand
         {
             GuildId = GuildId,
-            Track = QueuedTrackValue.Create(track, notifyChannelId, requestUserId, true)
+            Track = QueuedTrackValue.Create(track, notifyChannelId, requestUserId, TrackStatus.Playing)
         });
         
         await base.PlayAsync(track, startTime, endTime, noReplace);
@@ -58,7 +59,7 @@ public sealed class HeraldPlayer : LavalinkPlayer
             await _mediator.Send(new QueueTrackCommand
             {
                 GuildId = GuildId,
-                Track = QueuedTrackValue.Create(track, notifyChannelId, requestUserId)
+                Track = QueuedTrackValue.Create(track, notifyChannelId, requestUserId, TrackStatus.Queued)
             });
         }
         catch (Exception)
@@ -80,7 +81,6 @@ public sealed class HeraldPlayer : LavalinkPlayer
 
         if (nextTrack is not null)
         {
-            
             await PlayAsync(nextTrack.GetLavalinkTrack(), false,
                 requestUserId ?? nextTrack.RequestUserId,
                 notifyChannelId ?? nextTrack.NotifyChannelId);
@@ -139,6 +139,7 @@ public sealed class HeraldPlayer : LavalinkPlayer
         
         if (eventArgs.MayStartNext)
         {
+            await base.StopAsync();
             await SkipAsync();
             return;
         }

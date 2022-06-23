@@ -11,4 +11,13 @@ public static partial class ApplicationCommonExtensions
     {
         return list.Reverse().Skip(count).Reverse();
     }
+
+    public static IList<T> RemoveLast<T>(this IList<T> list, Func<T, bool> predicate, int count)
+    {
+        var modified = list.ToList();
+        var selected = list.Where(predicate).RemoveLast(count);
+
+        modified.RemoveAll(x => selected.Contains(x));
+        return modified;
+    }
 }

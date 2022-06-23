@@ -1,4 +1,5 @@
 ﻿using Herald.Core.Application.Abstractions;
+using Herald.Core.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,9 +20,10 @@ public class HasQueuedTrackQueryHandler : IRequestHandler<HasQueuedTrackQuery, b
     {
         var queue = await _context.Queues
             .Include(x => x.Tracks)
-            .SingleOrDefaultAsync(cancellationToken);
+            .SingleOrDefaultAsync(x => x.GuildId.Equals(request.GuildId), cancellationToken);
 
         return queue is not null && 
-               queue.Tracks.Any(x => !x.Played && !x.Playing && !x.Paused);
+               queue.Tracks.Any(x =>
+                   x.Status.Equals(TrackStatus.Queued));
     }
 }
