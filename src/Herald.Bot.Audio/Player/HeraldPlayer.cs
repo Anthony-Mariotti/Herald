@@ -60,7 +60,7 @@ public sealed class HeraldPlayer : LavalinkPlayer
             }
         }
 
-        if (DisconnectOnStop)
+        if (DisconnectOnStop && eventArgs.Reason is not TrackEndReason.Replaced)
         {
             _logger.LogTrace("Disconnecting on stop for {GuildId}", GuildId);
             await DisconnectAsync();

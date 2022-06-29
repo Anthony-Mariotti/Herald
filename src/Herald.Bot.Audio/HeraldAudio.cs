@@ -29,7 +29,6 @@ public class HeraldAudio : IHeraldAudio
 
     private HeraldPlayer _player;
 
-
     public HeraldAudio(ILogger<HeraldAudio> logger, HeraldPlayer player, IAudioService service, DiscordClient client,
         ISender mediator)
     {
