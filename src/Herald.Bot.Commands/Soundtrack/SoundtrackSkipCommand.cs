@@ -20,8 +20,8 @@ public class SoundtrackSkipCommand : SoundtrackBaseCommand
     {
         try
         {
-            _logger.LogInformation("Skip Command Executed by {User} in {Guild}", context.User.Username,
-                context.Guild.Name);
+            _logger.LogInformation("Skip Command Executed by {User} in {Guild}", context.User.Id,
+                context.Guild.Id);
             
             if (!await CommandPreCheckAsync(context)) return;
 

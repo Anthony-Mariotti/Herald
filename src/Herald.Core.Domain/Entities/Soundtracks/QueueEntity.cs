@@ -37,6 +37,20 @@ public sealed class QueueEntity : BaseEntity, IAggregateRoot
         return track;
     }
 
+    public void PlayTrack(string trackIdentifier)
+    {
+        if (string.IsNullOrWhiteSpace(trackIdentifier))
+            throw new ArgumentException("Value cannot be null or whitespace.", nameof(trackIdentifier));
+
+        bool IsQueuedTrack(QueuedTrackValue track, string identifier)
+            => track.Status.Equals(TrackStatus.Queued) && track.Identifier.Equals(identifier);
+
+        if (!Tracks.Any(x => IsQueuedTrack(x, trackIdentifier))) return;
+        
+        var track = Tracks.FirstOrDefault(x => IsQueuedTrack(x, trackIdentifier));
+        track?.Play();
+    }
+    
     public void AddTrack(QueuedTrackValue track)
     {
         if (track is null) throw new ArgumentNullException(nameof(track));
@@ -48,19 +62,8 @@ public sealed class QueueEntity : BaseEntity, IAggregateRoot
                 oldTrack.Ended();
             }
         }
-
-        bool ExistingTrack(QueuedTrackValue input) =>
-            input.Identifier.Equals(track.Identifier);
         
-        if (Tracks.Any(ExistingTrack))
-        {
-            Tracks.Single(ExistingTrack).Play();
-            AuditHistory();
-            return;
-        }
-
         Tracks.Add(track);
-        AuditHistory();
     }
 
     public void RemoveTrack(string trackId)
@@ -76,13 +79,13 @@ public sealed class QueueEntity : BaseEntity, IAggregateRoot
         Tracks.Remove(track);
     }
 
-    public void TrackEnded(string trackId)
+    public void TrackEnded(string identifier)
     {
-        if (string.IsNullOrWhiteSpace(trackId))
-            throw new ArgumentException("Value cannot be null or whitespace.", nameof(trackId));
+        if (string.IsNullOrWhiteSpace(identifier))
+            throw new ArgumentException("Value cannot be null or whitespace.", nameof(identifier));
 
         var track = Tracks.SingleOrDefault(x =>
-            x.Identifier.Equals(trackId) && 
+            x.Identifier.Equals(identifier) && 
             x.Status.Equals(TrackStatus.Playing));
 
         track?.Ended();
@@ -91,12 +94,12 @@ public sealed class QueueEntity : BaseEntity, IAggregateRoot
 
     private void AuditHistory()
     {
-        bool PlayedFunc(QueuedTrackValue x) => x.Status.Equals(TrackStatus.Played);
+        bool IsPlayed(QueuedTrackValue x) => x.Status.Equals(TrackStatus.Played);
 
-        var playedCount = Tracks.Count(PlayedFunc);
+        var playedCount = Tracks.Count(IsPlayed);
         if (playedCount <= 15) return;
         
-        var tracks = Tracks.Where(PlayedFunc).Take(15).ToList();
+        var tracks = Tracks.Where(IsPlayed).Take(15).ToList();
         foreach (var track in tracks)
         {
             Tracks.Remove(track);

@@ -21,7 +21,8 @@ public class SoundtrackQueueCommand : SoundtrackBaseCommand
     [SlashCommand("list", "View the current track queue.")]
     public async Task QueueCommand(InteractionContext context)
     {
-        _logger.LogInformation("Queue Command Executed by {User} in {Guild}", context.User.Username, context.Guild.Name);
+        _logger.LogInformation("Queue Command Executed by {User} in {Guild}", context.User.Id,
+            context.Guild.Id);
         
         if (!await CommandPreCheckAsync(context))
             return;

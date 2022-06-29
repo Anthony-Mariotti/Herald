@@ -84,5 +84,6 @@ public class QueuedTrackValue : ValueObject
         yield return Provider;
         yield return Source;
         yield return Encoded;
+        yield return Status;
     }
 }

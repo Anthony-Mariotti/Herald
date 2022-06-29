@@ -1,6 +1,7 @@
 ﻿using Herald.Core.Application.Abstractions;
 using Herald.Core.Application.Exceptions;
 using Herald.Core.Domain.Entities.Soundtracks;
+using Herald.Core.Domain.Enums;
 using Herald.Core.Domain.Events.Soundtracks;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,8 @@ public record TrackEndedCommand : IRequest
     /// Lavalink4NET TrackIdentifier
     /// </summary>
     public string Identifier { get; init; } = default!;
+
+    public TrackStatusReason Reason { get; init; } = default!;
 }
 
 public class TrackEndedCommandHandler : IRequestHandler<TrackEndedCommand>
@@ -31,11 +34,6 @@ public class TrackEndedCommandHandler : IRequestHandler<TrackEndedCommand>
     
     public async Task<Unit> Handle(TrackEndedCommand request, CancellationToken cancellationToken)
     {
-        _logger.LogDebug("Handling {Command}: {@Request}", nameof(TrackEndedCommand), new
-        {
-            request.GuildId, TrackId = request.Identifier
-        });
-        
         var queue = await _context.Queues
             .Include(x => x.Tracks)
             .SingleOrDefaultAsync(x => x.GuildId.Equals(request.GuildId),
@@ -45,7 +43,7 @@ public class TrackEndedCommandHandler : IRequestHandler<TrackEndedCommand>
             throw new NotFoundException(nameof(QueueEntity), request.GuildId);
 
         queue.TrackEnded(request.Identifier);
-        queue.AddDomainEvent(new TrackEndedEvent(request.GuildId, request.Identifier));
+        queue.AddDomainEvent(new TrackEndedEvent(request.GuildId, request.Identifier, request.Reason));
 
         await _context.SaveChangesAsync(cancellationToken);
         return Unit.Value;

@@ -5,9 +5,9 @@ using Herald.Bot.Audio.Player;
 using Herald.Core.Application.Soundtracks.Commands.DequeueTrack;
 using Herald.Core.Application.Soundtracks.Commands.PauseTrack;
 using Herald.Core.Application.Soundtracks.Commands.PlayTrack;
+using Herald.Core.Application.Soundtracks.Commands.PlayTrackFromQueue;
 using Herald.Core.Application.Soundtracks.Commands.QueueTrack;
 using Herald.Core.Application.Soundtracks.Commands.ResumeTrack;
-using Herald.Core.Application.Soundtracks.Commands.StopTrack;
 using Herald.Core.Application.Soundtracks.Queries.GetNextTrack;
 using Herald.Core.Application.Soundtracks.Queries.HasQueuedTrack;
 using Herald.Core.Domain.Enums;
@@ -110,11 +110,10 @@ public class HeraldAudio : IHeraldAudio
         
         await _player.PlayAsync(nextTrack.GetLavalinkTrack());
         await context.CreateResponseAsync(HeraldAudioMessage.NowPlayingEmbed(track, user));
-        await _mediator.Send(new PlayTrackCommand
+        await _mediator.Send(new PlayTrackFromQueueCommand
         {
             GuildId = context.Guild.Id,
-            Track = QueuedTrackValue.Create(track, nextTrack.NotifyChannelId, nextTrack.RequestUserId,
-                TrackStatus.Playing)
+            TrackIdentifier = nextTrack.Identifier
         });
     }
 
@@ -186,6 +185,14 @@ public class HeraldAudio : IHeraldAudio
 
     public Task PlayQueueAsync(InteractionContext context)
     {
+        // TODO: Check if Guild Has Track Queued
+        
+        // TODO: Get Queued Track
+        
+        // TODO: Send Message and Play Track
+        
+        // TODO: Send Play Track From Queue
+
         throw new NotImplementedException();
     }
 
@@ -198,8 +205,6 @@ public class HeraldAudio : IHeraldAudio
         await _player.StopAsync(true);
         
         await context.CreateResponseAsync(HeraldAudioMessage.StoppedEmbed(context.Member));
-
-        await _mediator.Send(new StopTrackCommand(context.Guild.Id));
     }
 
     public async Task PauseAsync(InteractionContext context)

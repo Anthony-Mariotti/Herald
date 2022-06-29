@@ -20,8 +20,8 @@ public class SoundtrackPauseCommand : SoundtrackBaseCommand
     {
         try
         {
-            _logger.LogInformation("Pause Command Executed by {User} in {Guild}", context.User.Username,
-                context.Guild.Name);
+            _logger.LogInformation("Pause Command Executed by {User} in {Guild}", context.User.Id,
+                context.Guild.Id);
 
             if (!await CommandPreCheckAsync(context)) return;
 

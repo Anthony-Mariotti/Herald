@@ -30,7 +30,9 @@ public class ModuleCommand : ApplicationCommandModule
     [SlashCommand("list", "List of all of the available modules.")]
     public async Task ListModulesCommand(InteractionContext context)
     {
-        _logger.LogInformation("Module List Command Executed by {User} in {Guild}", context.Guild.Name, context.User.Username);
+        _logger.LogInformation("Module List Command Executed by {User} in {Guild}", context.User.Id,
+            context.Guild.Id);
+        
         await context.CreateResponseAsync(new DiscordInteractionResponseBuilder().WithContent("TODO: List of modules"));
     }
 
@@ -39,7 +41,8 @@ public class ModuleCommand : ApplicationCommandModule
         InteractionContext context,
         [Option("module", "Module to enable")] GuildModules modules)
     {
-        _logger.LogInformation("Module Enable Command Executed by {User} in {Guild}", context.Guild.Name, context.User.Username);
+        _logger.LogInformation("Module Enable Command Executed by {User} in {Guild}", context.User.Id,
+            context.Guild.Id);
 
         await _mediator.Send(new ModuleEnableCommand
         {
@@ -56,7 +59,8 @@ public class ModuleCommand : ApplicationCommandModule
         InteractionContext context,
         [Option("module", "Module to disable")] GuildModules modules)
     {
-        _logger.LogInformation("Module Disable Command Executed by {User} in {Guild}", context.Guild.Name, context.User.Username);
+        _logger.LogInformation("Module Disable Command Executed by {User} in {Guild}", context.User.Id,
+            context.Guild.Id);
 
         await _mediator.Send(new ModuleDisableCommand
         {
