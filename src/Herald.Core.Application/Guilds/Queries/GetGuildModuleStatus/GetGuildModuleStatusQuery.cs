@@ -25,9 +25,6 @@ public class GetGuildModuleStatusQueryHandler : IRequestHandler<GetGuildModuleSt
     
     public async Task<bool> Handle(GetGuildModuleStatusQuery request, CancellationToken cancellationToken)
     {
-        // var filter = Builders<GuildEntity>.Filter
-        //     .Eq(x => x.GuildId, request.GuildId);
-
         var guild = await _context.Guilds
             .Include(x => x.Modules)
             .SingleOrDefaultAsync(x => x.GuildId.Equals(request.GuildId), cancellationToken);

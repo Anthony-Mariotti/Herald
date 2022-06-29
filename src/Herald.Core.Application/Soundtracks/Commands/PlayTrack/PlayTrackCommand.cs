@@ -11,11 +11,7 @@ namespace Herald.Core.Application.Soundtracks.Commands.PlayTrack;
 public record PlayTrackCommand : IRequest
 {
     public ulong GuildId { get; init; }
-    
-    public ulong NotifyChannelId { get; init; }
-    
-    public ulong RequestUserId { get; init; }
-    
+
     // TODO: This is a hard dependency on Lavalink, change to be the actual soundtrack for more clear separation.
     public QueuedTrackValue Track { get; init; } = default!;
 }
@@ -33,9 +29,6 @@ public class PlayTrackCommandHandler : IRequestHandler<PlayTrackCommand>
     
     public async Task<Unit> Handle(PlayTrackCommand request, CancellationToken cancellationToken)
     {
-        // var filter = Builders<QueueEntity>.Filter
-        //     .Eq(x => x.GuildId, request.GuildId);
-
         var queue = await _context.Queues
             .Include(x => x.Tracks)
             .SingleOrDefaultAsync(x => x.GuildId.Equals(request.GuildId),

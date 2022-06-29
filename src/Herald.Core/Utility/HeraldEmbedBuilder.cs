@@ -1,6 +1,6 @@
 ﻿using DSharpPlus.Entities;
 
-namespace Herald.Bot.Commands.Utilities;
+namespace Herald.Core.Utility;
 
 public static class HeraldEmbedBuilder
 {

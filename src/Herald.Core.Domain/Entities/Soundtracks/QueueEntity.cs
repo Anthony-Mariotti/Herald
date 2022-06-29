@@ -1,5 +1,4 @@
-﻿using Herald.Core.Domain.Common.Extensions;
-using Herald.Core.Domain.Enums;
+﻿using Herald.Core.Domain.Enums;
 using Herald.Core.Domain.ValueObjects.Soundtracks;
 
 namespace Herald.Core.Domain.Entities.Soundtracks;
@@ -94,14 +93,13 @@ public sealed class QueueEntity : BaseEntity, IAggregateRoot
     {
         bool PlayedFunc(QueuedTrackValue x) => x.Status.Equals(TrackStatus.Played);
 
-        var tracks = Tracks.Where(PlayedFunc).ToList();
-
-        if (!tracks.Any()) return;
-
-        var playedCount = tracks.Count(PlayedFunc);
-        if (playedCount > 15)
+        var playedCount = Tracks.Count(PlayedFunc);
+        if (playedCount <= 15) return;
+        
+        var tracks = Tracks.Where(PlayedFunc).Take(15).ToList();
+        foreach (var track in tracks)
         {
-            tracks.RemoveLast(PlayedFunc, playedCount - 15);
+            Tracks.Remove(track);
         }
     }
 }

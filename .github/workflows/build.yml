@@ -17,10 +17,10 @@ jobs:
           dotnet-version: ${{ matrix.dotnet-version }}
           
       - name: Install Dependencies
-        run: dotnet restore
+        run: dotnet restore -v m
         
       - name: Build
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build --configuration Release --no-restore --nologo -v m
         
       #- name: Test
       #  run: dotnet test --no-restore --verbosity normal

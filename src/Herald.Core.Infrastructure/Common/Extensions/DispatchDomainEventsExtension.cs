@@ -2,9 +2,9 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Herald.Core.Infrastructure.Common;
+namespace Herald.Core.Infrastructure.Common.Extensions;
 
-public static class MediatorExtensions
+public static partial class InfrastructureExtensions
 {
     public static async Task DispatchDomainEvents(this IMediator mediator, DbContext context)
     {

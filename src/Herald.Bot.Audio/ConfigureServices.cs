@@ -1,4 +1,6 @@
-﻿using Herald.Core.Configuration;
+﻿using Herald.Bot.Audio.Abstractions;
+using Herald.Bot.Audio.Player;
+using Herald.Core.Configuration;
 using Lavalink4NET;
 using Lavalink4NET.DSharpPlus;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +19,9 @@ public static class ConfigureServices
         });
         
         services.AddSingleton<IAudioService, LavalinkNode>();
+
+        services.AddSingleton<HeraldPlayer>();
+        services.AddTransient<IHeraldAudio, HeraldAudio>();
         /*
             TODO: For some reason I can't retrieve the artwork server from Lavalink4NET
             It's possible that I am doing something wrong, but I have followed their documentation

@@ -18,7 +18,8 @@ public class QueueConfiguration : IEntityTypeConfiguration<QueueEntity>
         
         builder.HasMany(x => x.Tracks)
             .WithOne()
-            .HasForeignKey("QueueId");
+            .HasForeignKey("QueueId")
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.Ignore(p => p.DomainEvents);
     }

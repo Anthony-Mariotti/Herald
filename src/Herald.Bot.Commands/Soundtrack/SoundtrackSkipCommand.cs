@@ -1,8 +1,5 @@
-﻿using DSharpPlus.Entities;
-using DSharpPlus.SlashCommands;
-using Herald.Bot.Commands.Utilities;
-using Lavalink4NET;
-using Lavalink4NET.Player;
+﻿using DSharpPlus.SlashCommands;
+using Herald.Bot.Audio.Abstractions;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -12,7 +9,7 @@ public class SoundtrackSkipCommand : SoundtrackBaseCommand
 {
     private readonly ILogger<SoundtrackSkipCommand> _logger;
 
-    public SoundtrackSkipCommand(ILoggerFactory logger, IAudioService audio, ISender mediator)
+    public SoundtrackSkipCommand(ILoggerFactory logger, IHeraldAudio audio, ISender mediator)
         : base(logger, audio, mediator)
     {
         _logger = logger.CreateLogger<SoundtrackSkipCommand>();
@@ -21,32 +18,18 @@ public class SoundtrackSkipCommand : SoundtrackBaseCommand
     [SlashCommand("skip", "Skip the current track that is currently playing")]
     public async Task SkipCommand(InteractionContext context)
     {
-        _logger.LogInformation("Skip Command Executed by {User} in {Guild}", context.User.Username, context.Guild.Name);
-
-        if (!await CommandPreCheckAsync(context))
-            return;
-
-        var player = await GetPlayerAsync(context);
-
-        await player.SkipAsync(1, context.Member.Id, context.Channel.Id);
-
-        if (player.CurrentTrack is null)
+        try
         {
-            await SendErrorResponse(context, "Soundtrack error", "There was an error skipping the track.");
-            return;
-        }
+            _logger.LogInformation("Skip Command Executed by {User} in {Guild}", context.User.Username,
+                context.Guild.Name);
+            
+            if (!await CommandPreCheckAsync(context)) return;
 
-        await context.CreateResponseAsync(NowPlayingEmbed(player.CurrentTrack, context.Member));
+            await HeraldAudio.SkipAsync(context);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error handling slash command");
+        }
     }
-    
-    private static DiscordEmbed NowPlayingEmbed(LavalinkTrack track, DiscordUser user)
-        =>  HeraldEmbedBuilder
-            .Information()
-            .WithAuthor("Now Playing", iconUrl: "https://play-lh.googleusercontent.com/SqMGe5wxL6HfT03WNGepMvGxXyS9EOFm4V7NzLCofFxPwFVJqRavYe5-EPQV3WAW7DU")
-            .WithTitle(track.Title)
-            .WithUrl(track.Source)
-            .WithImageUrl($"https/img.youtube.com/vi/{track.Identifier}/0.jpg")
-            .WithFooter($"Requested by {user.Username}#{user.Discriminator}", user.AvatarUrl)
-            .WithTimestamp(DateTime.Now)
-            .Build();
 }

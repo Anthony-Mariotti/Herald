@@ -1,7 +1,5 @@
-﻿using DSharpPlus.Entities;
-using DSharpPlus.SlashCommands;
-using Herald.Bot.Commands.Utilities;
-using Lavalink4NET;
+﻿using DSharpPlus.SlashCommands;
+using Herald.Bot.Audio.Abstractions;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -11,7 +9,7 @@ public class SoundtrackStopCommand : SoundtrackBaseCommand
 {
     private readonly ILogger<SoundtrackStopCommand> _logger;
 
-    public SoundtrackStopCommand(ILoggerFactory logger, IAudioService audio, ISender mediator)
+    public SoundtrackStopCommand(ILoggerFactory logger, IHeraldAudio audio, ISender mediator)
         : base(logger, audio, mediator)
     {
         _logger = logger.CreateLogger<SoundtrackStopCommand>();
@@ -20,23 +18,18 @@ public class SoundtrackStopCommand : SoundtrackBaseCommand
     [SlashCommand("stop", "Stop playing the current track and disconnects the bot from the voice channel.")]
     public async Task StopCommand(InteractionContext context)
     {
-        _logger.LogInformation("Stop Command Executed by {User} in {Guild}", context.User.Username, context.Guild.Name);
+        try
+        {
+            _logger.LogInformation("Stop Command Executed by {User} in {Guild}", context.User.Username,
+                context.Guild.Name);
 
-        if (!await CommandPreCheckAsync(context))
-            return;
+            if (!await CommandPreCheckAsync(context)) return;
 
-        var player = await GetPlayerAsync(context);
-
-        await player.StopAsync(true);
-        
-        await context.CreateResponseAsync(StopEmbed(context.Member));
+            await HeraldAudio.StopAsync(context);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error handling slash command");
+        }
     }
-    
-    private static DiscordEmbed StopEmbed(DiscordUser user)
-        =>  HeraldEmbedBuilder
-            .Information()
-            .WithAuthor("Music has stopped")
-            .WithFooter($"Requested by {user.Username}#{user.Discriminator}", user.AvatarUrl)
-            .WithTimestamp(DateTime.Now)
-            .Build();
 }

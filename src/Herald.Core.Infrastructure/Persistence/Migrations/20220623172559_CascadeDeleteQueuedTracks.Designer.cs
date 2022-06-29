@@ -4,6 +4,7 @@ using Herald.Core.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Herald.Core.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(HeraldDbContext))]
-    partial class HeraldDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220623172559_CascadeDeleteQueuedTracks")]
+    partial class CascadeDeleteQueuedTracks
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

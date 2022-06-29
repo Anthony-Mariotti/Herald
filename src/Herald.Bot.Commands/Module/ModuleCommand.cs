@@ -1,9 +1,9 @@
 ﻿using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
-using Herald.Bot.Commands.Utilities;
 using Herald.Core.Application.Modules.Commands.ModuleDisable;
 using Herald.Core.Application.Modules.Commands.ModuleEnable;
 using Herald.Core.Domain.ValueObjects.Modules;
+using Herald.Core.Utility;
 using MediatR;
 using Microsoft.Extensions.Logging;
 

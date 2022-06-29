@@ -9,6 +9,7 @@
     <ItemGroup>
       <PackageReference Include="DSharpPlus" Version="4.3.0-nightly-01146" />
       <PackageReference Include="DSharpPlus.SlashCommands" Version="4.3.0-nightly-01146" />
+      <PackageReference Include="Humanizer" Version="2.14.1" />
       <PackageReference Include="MediatR" Version="10.0.1" />
     </ItemGroup>
 
@@ -16,6 +17,10 @@
       <ProjectReference Include="..\Herald.Bot.Audio\Herald.Bot.Audio.csproj" />
       <ProjectReference Include="..\Herald.Core.Application\Herald.Core.Application.csproj" />
       <ProjectReference Include="..\Herald.Core\Herald.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Utilities" />
     </ItemGroup>
 
 </Project>

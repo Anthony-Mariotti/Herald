@@ -2,7 +2,7 @@
 using Herald.Core.Application.Abstractions;
 using Herald.Core.Domain.Entities.Guilds;
 using Herald.Core.Domain.Entities.Soundtracks;
-using Herald.Core.Infrastructure.Common;
+using Herald.Core.Infrastructure.Common.Extensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -34,8 +34,10 @@ public class HeraldDbContext : DbContext, IHeraldDbContext
 
     public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
     {
-        _logger.LogTrace("Dispatching Domain Events and Saving Changes");
+        _logger.LogTrace("Dispatching Domain Events");
         await _mediator.DispatchDomainEvents(this);
+        
+        _logger.LogTrace("Saving Database Changes");
         return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
     }
 
