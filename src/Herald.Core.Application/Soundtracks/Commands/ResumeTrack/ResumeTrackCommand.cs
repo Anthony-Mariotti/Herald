@@ -1,6 +1,7 @@
 ﻿using Herald.Core.Application.Abstractions;
 using Herald.Core.Application.Exceptions;
 using Herald.Core.Domain.Entities.Soundtracks;
+using Herald.Core.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,7 +27,7 @@ public class ResumeTrackCommandHandler : IRequestHandler<ResumeTrackCommand>
         if (queue is null)
             throw new NotFoundException(nameof(QueueEntity), request.GuildId);
         
-        queue.GetPausedTrack()?.Play();
+        queue.GetPausedTrack()?.Play(TrackStatusReason.UserResumed);
 
         // TODO: Add Track Resumed Domain Event
         await _context.SaveChangesAsync(cancellationToken);

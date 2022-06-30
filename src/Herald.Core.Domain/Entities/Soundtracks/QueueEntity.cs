@@ -48,7 +48,7 @@ public sealed class QueueEntity : BaseEntity, IAggregateRoot
         if (!Tracks.Any(x => IsQueuedTrack(x, trackIdentifier))) return;
         
         var track = Tracks.FirstOrDefault(x => IsQueuedTrack(x, trackIdentifier));
-        track?.Play();
+        track?.Play(TrackStatusReason.FromQueue);
     }
     
     public void AddTrack(QueuedTrackValue track)
@@ -57,9 +57,9 @@ public sealed class QueueEntity : BaseEntity, IAggregateRoot
 
         if (track.Status.Equals(TrackStatus.Playing))
         {
-            foreach (var oldTrack in Tracks.Where(x => !x.Status.Equals(TrackStatus.Queued)))
+            foreach (var oldTrack in Tracks.Where(x => x.Status.Equals(TrackStatus.Playing)))
             {
-                oldTrack.Ended();
+                oldTrack.Ended(TrackStatusReason.TrackCleanUp);
             }
         }
         
@@ -79,7 +79,7 @@ public sealed class QueueEntity : BaseEntity, IAggregateRoot
         Tracks.Remove(track);
     }
 
-    public void TrackEnded(string identifier)
+    public void TrackEnded(string identifier, TrackStatusReason reason)
     {
         if (string.IsNullOrWhiteSpace(identifier))
             throw new ArgumentException("Value cannot be null or whitespace.", nameof(identifier));
@@ -88,18 +88,24 @@ public sealed class QueueEntity : BaseEntity, IAggregateRoot
             x.Identifier.Equals(identifier) && 
             x.Status.Equals(TrackStatus.Playing));
 
-        track?.Ended();
+        track?.Ended(reason);
         AuditHistory();
     }
 
     private void AuditHistory()
     {
-        bool IsPlayed(QueuedTrackValue x) => x.Status.Equals(TrackStatus.Played);
-
-        var playedCount = Tracks.Count(IsPlayed);
-        if (playedCount <= 15) return;
+        const int maxCount = 15;
         
-        var tracks = Tracks.Where(IsPlayed).Take(15).ToList();
+        bool IsPlayed(QueuedTrackValue x) => 
+            x.Status.Equals(TrackStatus.Played) ||
+            x.Status.Equals(TrackStatus.Failed) ||
+            x.Status.Equals(TrackStatus.Skipped);
+        
+        var playedCount = Tracks.Count(IsPlayed);
+        if (playedCount <= maxCount) return;
+
+        var removeCount = playedCount - maxCount;
+        var tracks = Tracks.Where(IsPlayed).Take(removeCount).ToList();
         foreach (var track in tracks)
         {
             Tracks.Remove(track);

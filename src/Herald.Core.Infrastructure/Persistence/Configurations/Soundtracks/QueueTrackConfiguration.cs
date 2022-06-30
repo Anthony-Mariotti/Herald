@@ -30,6 +30,12 @@ public class QueueTrackConfiguration : IEntityTypeConfiguration<QueuedTrackValue
                 v => v.Value,
                 v => TrackStatus.FromValue(v));
 
+        builder.Property(p => p.StatusReason)
+            .IsRequired()
+            .HasConversion(
+                v => v.Value,
+                v => TrackStatusReason.FromValue(v));
+
         builder.Property(p => p.Author)
             .IsRequired()
             .HasMaxLength(160);

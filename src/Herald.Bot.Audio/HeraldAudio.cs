@@ -73,11 +73,12 @@ public class HeraldAudio : IHeraldAudio
         }
 
         await context.CreateResponseAsync(HeraldAudioMessage.NowPlayingEmbed(result, context.Member));
-        
+
         await _mediator.Send(new PlayTrackCommand
         {
             GuildId = context.Guild.Id,
-            Track = QueuedTrackValue.Create(result, context.Channel.Id, context.Member.Id, TrackStatus.Playing)
+            Track = QueuedTrackValue.Create(result, context.Channel.Id, context.Member.Id, TrackStatus.Playing,
+                TrackStatusReason.UserAdded)
         });
         
         await _player.PlayAsync(result);
@@ -162,7 +163,8 @@ public class HeraldAudio : IHeraldAudio
         await _mediator.Send(new QueueTrackCommand
         {
             GuildId = context.Guild.Id,
-            Track = QueuedTrackValue.Create(track, context.Channel.Id, context.Member.Id, TrackStatus.Queued)
+            Track = QueuedTrackValue.Create(track, context.Channel.Id, context.Member.Id, TrackStatus.Queued,
+                TrackStatusReason.UserAdded)
         });
     }
 
@@ -256,6 +258,4 @@ public class HeraldAudio : IHeraldAudio
         
         _player = await _service.JoinAsync(() => _player, context.Guild.Id, context.Member.VoiceState.Channel.Id);
     }
-    
-    
 }

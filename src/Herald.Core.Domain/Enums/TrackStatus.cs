@@ -12,5 +12,9 @@ public sealed class TrackStatus : SmartEnum<TrackStatus>
 
     public static readonly TrackStatus Played = new(nameof(Played), 4);
 
+    public static readonly TrackStatus Skipped = new(nameof(Skipped), 5);
+    
+    public static readonly TrackStatus Failed = new(nameof(Failed), 6);
+
     private TrackStatus(string name, int value) : base(name, value) { }
 }

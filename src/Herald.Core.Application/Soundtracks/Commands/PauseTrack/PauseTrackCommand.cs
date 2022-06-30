@@ -1,6 +1,7 @@
 ﻿using Herald.Core.Application.Abstractions;
 using Herald.Core.Application.Exceptions;
 using Herald.Core.Domain.Entities.Soundtracks;
+using Herald.Core.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -34,7 +35,7 @@ public class PauseTrackCommandHandler : IRequestHandler<PauseTrackCommand>
 
         if (queue is null) throw new NotFoundException(nameof(QueueEntity), request.GuildId);
 
-        queue.GetPlayingTrack()?.Pause();
+        queue.GetPlayingTrack()?.Pause(TrackStatusReason.UserPaused);
 
         await _context.SaveChangesAsync(cancellationToken);
         return Unit.Value;

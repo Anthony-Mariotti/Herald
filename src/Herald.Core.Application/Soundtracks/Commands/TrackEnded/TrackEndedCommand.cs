@@ -42,9 +42,10 @@ public class TrackEndedCommandHandler : IRequestHandler<TrackEndedCommand>
         if (queue is null)
             throw new NotFoundException(nameof(QueueEntity), request.GuildId);
 
-        queue.TrackEnded(request.Identifier);
+        queue.TrackEnded(request.Identifier, request.Reason);
         queue.AddDomainEvent(new TrackEndedEvent(request.GuildId, request.Identifier, request.Reason));
 
+        _context.Queues.Update(queue);
         await _context.SaveChangesAsync(cancellationToken);
         return Unit.Value;
     }
