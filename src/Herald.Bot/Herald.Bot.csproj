@@ -10,6 +10,7 @@
         <Authors>Anthony Mariotti</Authors>
         <Copyright>2022</Copyright>
         <Version>1.0.0.0-alpha</Version>
+        <DockerfileContext>..\..</DockerfileContext>
     </PropertyGroup>
 
     <ItemGroup>
