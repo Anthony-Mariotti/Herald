@@ -14,7 +14,7 @@ public class Worker : BackgroundService
     
     private readonly IAudioService _audioService;
 
-    public Worker(ILogger<Worker> logger,DiscordClient discord, IAudioService audioService)
+    public Worker(ILogger<Worker> logger, DiscordClient discord, IAudioService audioService)
     {
         var assembly = Assembly.GetExecutingAssembly();
         _version = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "1.0.0.0";
@@ -44,8 +44,9 @@ public class Worker : BackgroundService
     {
         _logger.LogInformation("Shutting down Herald");
 
+        _audioService.Dispose();
         _discord.DisconnectAsync();
-        
+
         return base.StopAsync(cancellationToken);
     }
 }

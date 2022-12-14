@@ -1,4 +1,6 @@
-﻿using DSharpPlus.Entities;
+﻿using DSharpPlus;
+using DSharpPlus.Entities;
+using DSharpPlus.Interactivity.Extensions;
 using DSharpPlus.SlashCommands;
 using Herald.Bot.Audio.Abstractions;
 using Lavalink4NET.Rest;
@@ -24,10 +26,27 @@ public class SoundtrackQueueCommand : SoundtrackBaseCommand
         _logger.LogInformation("Queue Command Executed by {User} in {Guild}", context.User.Id,
             context.Guild.Id);
         
-        if (!await CommandPreCheckAsync(context))
-            return;
+        //if (!await CommandPreCheckAsync(context))
+        //    return;
+
+        var modal = new DiscordInteractionResponseBuilder()
+            .WithTitle("Current Queue")
+            .WithCustomId("queue-list")
+            .AddComponents(new TextInputComponent("Search", "search-track", "Never Gonna Give You Up", required: true));
+
+        await context.CreateResponseAsync(InteractionResponseType.Modal, modal);
+
+        var interactivity = context.Client.GetInteractivity();
         
-        await context.CreateResponseAsync(new DiscordInteractionResponseBuilder().WithContent("TODO: Queue List Command"));
+        var response = await interactivity.WaitForModalAsync("queue-list", user: context.User, timeoutOverride: TimeSpan.FromSeconds(30));
+        
+        if (!response.TimedOut)
+        {
+            var inter = response.Result.Interaction;
+            await inter.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("Success"));
+        }
+        else
+            await context.Channel.SendMessageAsync("Request timed out");
     }
 
     [SlashCommand("clear", "Clear out the current track queue")]
@@ -63,6 +82,32 @@ public class SoundtrackQueueCommand : SoundtrackBaseCommand
             
             if (!await CommandPreCheckAsync(context)) return;
 
+            if (string.IsNullOrWhiteSpace(search))
+            {
+                var unique = Guid.NewGuid();
+
+                var modal = new DiscordInteractionResponseBuilder()
+                    .WithTitle("Add Track to the Queue")
+                    .WithCustomId($"queue-add-modal-{unique}")
+                    .AddComponents(new TextInputComponent(label: "Search", customId: $"search-track-{unique}", value: "", max_length: 32));
+                await context.CreateResponseAsync(InteractionResponseType.Modal, modal);
+
+                var interactivity = context.Client.GetInteractivity();
+                var response = await interactivity.WaitForModalAsync($"queue-add-modal-{unique}", timeoutOverride: TimeSpan.FromSeconds(30));
+
+                if (!response.TimedOut)
+                {
+                    var inter = response.Result.Interaction;
+                    var modalSearch = response.Result.Values[$"search-track-{unique}"];
+                    
+                    await HeraldAudio.EnqueueAsync(inter, modalSearch, SearchMode.YouTube);
+                    return;
+                }
+                
+                await context.Channel.SendMessageAsync("Request timed out");
+                return;
+            }
+            
             await HeraldAudio.EnqueueAsync(context, search, SearchMode.YouTube);
         }
         catch (Exception ex)

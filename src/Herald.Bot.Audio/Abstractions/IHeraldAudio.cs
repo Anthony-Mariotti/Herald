@@ -1,4 +1,5 @@
-﻿using DSharpPlus.SlashCommands;
+﻿using DSharpPlus.Entities;
+using DSharpPlus.SlashCommands;
 using Herald.Core.Domain.ValueObjects.Soundtracks;
 using Lavalink4NET.Player;
 using Lavalink4NET.Rest;
@@ -8,6 +9,7 @@ namespace Herald.Bot.Audio.Abstractions;
 public interface IHeraldAudio
 {
     // Search Track
+    Task<LavalinkTrack?> SearchAsync(DiscordInteraction context, string search, SearchMode mode);
     public Task<LavalinkTrack?> SearchAsync(InteractionContext context, string search, SearchMode mode);
 
     // Play Track
@@ -17,6 +19,7 @@ public interface IHeraldAudio
     public Task SkipAsync(InteractionContext context);
     
     // Enqueue Track
+    public Task EnqueueAsync(DiscordInteraction interaction, string search, SearchMode mode);
     public Task EnqueueAsync(InteractionContext context, string search, SearchMode mode);
     public Task EnqueueAsync(InteractionContext context, LavalinkTrack track, bool queueOnly = false);
 

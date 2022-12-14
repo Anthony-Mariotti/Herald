@@ -1,4 +1,5 @@
 ﻿using DSharpPlus;
+using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
 using Herald.Bot.Audio.Abstractions;
 using Herald.Bot.Audio.Player;
@@ -37,6 +38,17 @@ public class HeraldAudio : IHeraldAudio
         _service = service;
         _client = client;
         _mediator = mediator;
+    }
+
+    public async Task<LavalinkTrack?> SearchAsync(DiscordInteraction context, string search, SearchMode mode)
+    {
+        if (context == null) throw new ArgumentNullException(nameof(context));
+        if (string.IsNullOrWhiteSpace(search))
+            throw new ArgumentException("Value cannot be null or whitespace.", nameof(search));
+
+        var result = await _service.GetTrackAsync(search, mode);
+
+        return result;
     }
 
     public async Task<LavalinkTrack?> SearchAsync(InteractionContext context, string search, SearchMode mode)
@@ -117,6 +129,24 @@ public class HeraldAudio : IHeraldAudio
             TrackIdentifier = nextTrack.Identifier
         });
     }
+    
+    public async Task EnqueueAsync(DiscordInteraction context, string search, SearchMode mode)
+    {
+        if (context == null) throw new ArgumentNullException(nameof(context));
+        if (string.IsNullOrWhiteSpace(search))
+            throw new ArgumentException("Value cannot be null or whitespace.", nameof(search));
+        
+        var result = await SearchAsync(context, search, mode);
+
+        if (result is null)
+        {
+            await context.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder()
+                .AddEmbed(HeraldAudioMessage.TrackNotFoundEmbed(search, context.User)));
+            return;
+        }
+
+        await EnqueueAsync(context, result, true);
+    }
 
     public async Task EnqueueAsync(InteractionContext context, string search, SearchMode mode)
     {
@@ -133,6 +163,40 @@ public class HeraldAudio : IHeraldAudio
         }
 
         await EnqueueAsync(context, result, true);
+    }
+    
+    public async Task EnqueueAsync(DiscordInteraction interaction, LavalinkTrack track, bool queueOnly = false)
+    {
+        if (interaction is null) throw new ArgumentNullException(nameof(interaction));
+        if (track is null) throw new ArgumentNullException(nameof(track));
+
+        if (!queueOnly)
+        {
+            await EnsureGuildHasPlayerAsync(interaction);
+        }
+        
+        // TODO: Has Queued Track
+        // var hasTrack = await Mediator.Send(new HasTrackQuery
+        // {
+        //    GuildId = context.Guild.Id,
+        //    Identifier = track.TrackIdentifier
+        // });
+        
+        // if (hasTrack)
+        // {
+        //     TODO: Has Track Message with Queue Position
+        //     return;
+        // }
+        
+        await interaction.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder()
+            .AddEmbed(HeraldAudioMessage.AddedToQueueEmbed(track, interaction.User)));
+
+        await _mediator.Send(new QueueTrackCommand
+        {
+            GuildId = interaction.Guild.Id,
+            Track = QueuedTrackValue.Create(track, interaction.Channel.Id, interaction.User.Id, TrackStatus.Queued,
+                TrackStatusReason.UserAdded)
+        });
     }
 
     public async Task EnqueueAsync(InteractionContext context, LavalinkTrack track, bool queueOnly = false)
@@ -239,6 +303,26 @@ public class HeraldAudio : IHeraldAudio
         await context.CreateResponseAsync(HeraldAudioMessage.ResumedEmbed(_player.CurrentTrack, context.Member));
 
         await _mediator.Send(new ResumeTrackCommand(context.Guild.Id));
+    }
+    
+    private async Task EnsureGuildHasPlayerAsync(DiscordInteraction interaction)
+    {
+        if (_service.HasPlayer(interaction.Guild.Id))
+        {
+            if (_player.GuildId.Equals(interaction.Guild.Id))
+                return;
+            
+            _player = _service.GetPlayer<HeraldPlayer>(interaction.Guild.Id) ??
+                      throw new InvalidOperationException("Failed to load player for guild.");
+            return;
+        }
+
+        var channel = await _client.GetChannelAsync(_player.VoiceChannelId!.Value);
+
+        if (!channel.Users.Any(x => x.Id.Equals(interaction.User.Id)))
+            throw new InvalidOperationException("Must provide a voice channel id to join.");
+
+        _player = await _service.JoinAsync(() => _player, interaction.Guild.Id, ((DiscordMember)interaction.User).VoiceState.Channel.Id);
     }
 
     private async Task EnsureGuildHasPlayerAsync(BaseContext context)

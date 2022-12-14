@@ -1,4 +1,6 @@
 ﻿using DSharpPlus;
+using DSharpPlus.Interactivity;
+using DSharpPlus.Interactivity.Extensions;
 using DSharpPlus.SlashCommands;
 using Herald.Bot.Commands;
 using Herald.Bot.Events.Abstractions.Handlers;
@@ -13,15 +15,29 @@ public static partial class HeraldBotExtensions
             {
                 var config = provider.GetRequiredService<DiscordConfiguration>();
                 var client = new DiscordClient(config);
-                
-                RegisterDiscordGuildEvents(provider, ref client);
-                RegisterDiscordChannelEvents(provider, ref client);
-                RegisterDiscordMessageEvents(provider, ref client);
-                RegisterCommands(provider, ref client);
+
+                RegisterInteractivity(ref client);
+                RegisterEvents(provider, ref client);
                 
                 return client;
             });
 
+    private static void RegisterInteractivity(ref DiscordClient client)
+    {
+        client.UseInteractivity(new InteractivityConfiguration
+        {
+            Timeout = TimeSpan.FromMinutes(2)
+        });
+    }
+    
+    private static void RegisterEvents(IServiceProvider provider, ref DiscordClient client)
+    {
+        RegisterDiscordGuildEvents(provider, ref client);
+        RegisterDiscordChannelEvents(provider, ref client);
+        RegisterDiscordMessageEvents(provider, ref client);
+        RegisterCommands(provider, ref client);
+    }
+    
     private static void RegisterDiscordChannelEvents(IServiceProvider provider, ref DiscordClient client)
     {
         var channelHandler = provider.GetRequiredService<IChannelEventHandler>();
