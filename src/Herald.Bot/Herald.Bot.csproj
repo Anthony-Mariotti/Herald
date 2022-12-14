@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Worker">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net7.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>dotnet-Hearald.Bot-A2D908DB-E381-4D0F-B146-ED1F3991445C</UserSecretsId>
@@ -11,6 +11,7 @@
         <Copyright>2022</Copyright>
         <Version>1.0.0.0-alpha</Version>
         <DockerfileContext>..\..</DockerfileContext>
+        <LangVersion>11</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
