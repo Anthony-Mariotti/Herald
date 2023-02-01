@@ -3,12 +3,11 @@ using System;
 using Herald.Core.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Herald.Core.Infrastructure.Persistence.Migrations
+namespace Herald.Core.Infrastructure.Migrations
 {
     [DbContext(typeof(HeraldDbContext))]
     partial class HeraldDbContextModelSnapshot : ModelSnapshot
@@ -17,33 +16,25 @@ namespace Herald.Core.Infrastructure.Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.6")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
-
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.HasSequence("QueuedTracksSeq")
-                .IncrementsBy(10);
-
-            modelBuilder.HasSequence("QueuesSeq")
-                .IncrementsBy(10);
+                .HasAnnotation("ProductVersion", "7.0.2")
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("Herald.Core.Domain.Entities.Guilds.GuildEntity", b =>
                 {
-                    b.Property<decimal>("GuildId")
-                        .HasColumnType("decimal(20,0)");
+                    b.Property<ulong>("GuildId")
+                        .HasColumnType("bigint unsigned");
 
                     b.Property<bool>("Joined")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<DateTime>("JoinedOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime?>("LeftOn")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime(6)");
 
-                    b.Property<decimal>("OwnerId")
-                        .HasColumnType("decimal(20,0)");
+                    b.Property<ulong>("OwnerId")
+                        .HasColumnType("bigint unsigned");
 
                     b.HasKey("GuildId");
 
@@ -56,10 +47,8 @@ namespace Herald.Core.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseHiLo(b.Property<long>("Id"), "QueuesSeq");
-
-                    b.Property<decimal>("GuildId")
-                        .HasColumnType("decimal(20,0)");
+                    b.Property<ulong>("GuildId")
+                        .HasColumnType("bigint unsigned");
 
                     b.HasKey("Id");
 
@@ -72,14 +61,12 @@ namespace Herald.Core.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
-
-                    b.Property<decimal>("GuildId")
-                        .HasColumnType("decimal(20,0)");
+                    b.Property<ulong>("GuildId")
+                        .HasColumnType("bigint unsigned");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
@@ -94,49 +81,47 @@ namespace Herald.Core.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseHiLo(b.Property<long>("Id"), "QueuedTracksSeq");
-
                     b.Property<string>("Author")
                         .IsRequired()
                         .HasMaxLength(160)
-                        .HasColumnType("nvarchar(160)");
+                        .HasColumnType("varchar(160)");
 
                     b.Property<TimeSpan>("Duration")
-                        .HasColumnType("time");
+                        .HasColumnType("time(6)");
 
                     b.Property<string>("Encoded")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Identifier")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("varchar(20)");
 
                     b.Property<bool>("Livestream")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
-                    b.Property<decimal>("NotifyChannelId")
-                        .HasColumnType("decimal(20,0)");
+                    b.Property<ulong>("NotifyChannelId")
+                        .HasColumnType("bigint unsigned");
 
                     b.Property<string>("Provider")
                         .IsRequired()
                         .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                        .HasColumnType("varchar(15)");
 
                     b.Property<long?>("QueueId")
                         .HasColumnType("bigint");
 
-                    b.Property<decimal>("RequestUserId")
-                        .HasColumnType("decimal(20,0)");
+                    b.Property<ulong>("RequestUserId")
+                        .HasColumnType("bigint unsigned");
 
                     b.Property<bool>("Seekable")
-                        .HasColumnType("bit");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Source")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("varchar(200)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -147,7 +132,7 @@ namespace Herald.Core.Infrastructure.Persistence.Migrations
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("varchar(200)");
 
                     b.HasKey("Id");
 

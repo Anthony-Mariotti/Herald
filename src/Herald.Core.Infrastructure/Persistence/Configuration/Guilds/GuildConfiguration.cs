@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Herald.Core.Infrastructure.Persistence.Configurations.Guilds;
+namespace Herald.Core.Infrastructure.Persistence.Configuration.Guilds;
 
 public class GuildConfiguration : IEntityTypeConfiguration<GuildEntity>
 {
@@ -24,10 +24,10 @@ public class GuildConfiguration : IEntityTypeConfiguration<GuildEntity>
             .WithOne()
             .HasForeignKey("GuildId")
             .IsRequired();
-        
+
         builder.Property(p => p.JoinedOn)
             .IsRequired();
-        
+
         builder.Property(p => p.LeftOn);
 
         builder.Ignore(p => p.DomainEvents);

@@ -15,7 +15,7 @@ public class UnhandledExceptionBehavior<TRequest, TResponse> : IPipelineBehavior
         _requestLogger = logger.CreateLogger<TRequest>();
     }
 
-    public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         _logger.LogTrace("Running {Behavior} on {Request}", typeof(UnhandledExceptionBehavior<,>).Name,
             typeof(TRequest).Name);

@@ -3,7 +3,7 @@ using Herald.Core.Domain.ValueObjects.Soundtracks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Herald.Core.Infrastructure.Persistence.Configurations.Soundtracks;
+namespace Herald.Core.Infrastructure.Persistence.Configuration.Soundtracks;
 
 public class QueueTrackConfiguration : IEntityTypeConfiguration<QueuedTrackValue>
 {
@@ -12,13 +12,9 @@ public class QueueTrackConfiguration : IEntityTypeConfiguration<QueuedTrackValue
         builder.ToTable("QueuedTracks");
 
         builder.Property<long>("Id")
-            .IsRequired()
-            .UseHiLo("QueuedTracksSeq");
+            .IsRequired();
 
         builder.HasKey("Id");
-
-        builder.Property("Id")
-            .UseHiLo("QueuedTracksSeq");
 
         builder.Property(p => p.Identifier)
             .IsRequired()

@@ -7,7 +7,7 @@ using Herald.Core;
 using Herald.Bot.Events;
 using Herald.Core.Application;
 using Herald.Core.Configuration;
-using Herald.Core.Infrastructure;
+using Herald.Core.Infrastructure.Common.Extensions;
 using Herald.Core.Infrastructure.Persistence;
 using Serilog;
 

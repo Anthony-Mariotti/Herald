@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Herald.Core.Infrastructure.Persistence.Configurations.Soundtracks;
+namespace Herald.Core.Infrastructure.Persistence.Configuration.Soundtracks;
 
 public class QueueConfiguration : IEntityTypeConfiguration<QueueEntity>
 {
@@ -10,8 +10,6 @@ public class QueueConfiguration : IEntityTypeConfiguration<QueueEntity>
     {
         builder.ToTable("Queues");
         builder.HasKey(p => p.Id);
-        builder.Property(p => p.Id)
-            .UseHiLo("QueuesSeq");
 
         builder.Property("GuildId")
             .IsRequired();

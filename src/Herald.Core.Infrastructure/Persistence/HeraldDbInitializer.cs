@@ -19,12 +19,9 @@ public class HeraldDbInitializer
         _logger.LogTrace("Initializing database");
         try
         {
-            if (_context.Database.IsSqlServer())
-            {
-                _logger.LogTrace("Beginning database migration");
-                await _context.Database.MigrateAsync();
-                _logger.LogTrace("Finished database migration");
-            }
+            _logger.LogTrace("Beginning database migration");
+            await _context.Database.MigrateAsync();
+            _logger.LogTrace("Finished database migration");
         }
         catch (Exception ex)
         {

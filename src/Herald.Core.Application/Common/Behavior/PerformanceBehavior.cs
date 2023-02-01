@@ -20,7 +20,7 @@ public class PerformanceBehavior<TRequest, TResponse> : IPipelineBehavior<TReque
         _timer = new Stopwatch();
     }
     
-    public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         _logger.LogTrace("Running {Behavior} on {Request}", typeof(PerformanceBehavior<,>).Name,
             typeof(TRequest).Name);

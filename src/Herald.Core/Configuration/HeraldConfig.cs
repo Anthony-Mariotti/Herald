@@ -4,7 +4,7 @@ namespace Herald.Core.Configuration;
 
 public class HeraldConfig
 {
-    public string? DiscordKey { get; set; }
+    public string DiscordKey { get; set; } = default!;
 
     public LavalinkNodeOptions Lavalink { get; set; } = new LavalinkNodeOptions
     {

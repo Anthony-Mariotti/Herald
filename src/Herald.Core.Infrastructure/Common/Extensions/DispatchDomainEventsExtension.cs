@@ -21,6 +21,8 @@ public static partial class InfrastructureExtensions
         entities.ForEach(e => e.ClearDomainEvents());
 
         foreach (var @event in domainEvents)
+        {
             await mediator.Publish(@event);
+        }
     }
 }
