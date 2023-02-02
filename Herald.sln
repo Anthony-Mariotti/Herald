@@ -27,9 +27,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Herald.Core.Domain.UnitTest
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Herald.Bot.Audio", "src\Herald.Bot.Audio\Herald.Bot.Audio.csproj", "{91408B8E-16EC-4AC3-BD00-E5A68DB04C49}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Herald.Bot.Reward", "src\Herald.Bot.Reward\Herald.Bot.Reward.csproj", "{34135DBD-C498-4250-B2D7-0DD9268D4EF7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Herald.Bot.Reward", "src\Herald.Bot.Reward\Herald.Bot.Reward.csproj", "{34135DBD-C498-4250-B2D7-0DD9268D4EF7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Herald.Bot.AnyDeal", "src\Herald.Bot.AnyDeal\Herald.Bot.AnyDeal.csproj", "{0742C7AD-6F29-4BA1-869E-E2EE6C169276}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Herald.Bot.AnyDeal", "src\Herald.Bot.AnyDeal\Herald.Bot.AnyDeal.csproj", "{0742C7AD-6F29-4BA1-869E-E2EE6C169276}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{1040697D-6999-4D4D-AD18-5BDA8A502132}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{C6E3429D-74F9-44C6-964E-57A4F7620E31}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\build.yml = .github\workflows\build.yml
+		.github\workflows\codeql-analysis.yml = .github\workflows\codeql-analysis.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -97,6 +105,7 @@ Global
 		{81B6033D-F24B-4B6A-A0F0-A91CF452B8C9} = {DE38BDEC-F9EF-4EDF-8C4B-CAF155C45D25}
 		{B89AFBEA-53A9-4DA3-B38B-142137501315} = {DE38BDEC-F9EF-4EDF-8C4B-CAF155C45D25}
 		{757B8216-EBCA-4A5E-A9A1-CF2BFD9923F9} = {DE38BDEC-F9EF-4EDF-8C4B-CAF155C45D25}
+		{C6E3429D-74F9-44C6-964E-57A4F7620E31} = {1040697D-6999-4D4D-AD18-5BDA8A502132}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DACC8DBE-F6E6-46FD-BD65-5A665DA8F158}
