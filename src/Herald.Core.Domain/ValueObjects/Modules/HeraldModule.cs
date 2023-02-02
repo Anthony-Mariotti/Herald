@@ -16,6 +16,8 @@ public class HeraldModule : ValueObject
 
     public static HeraldModule Soundtrack => new(nameof(Soundtrack));
 
+    public static HeraldModule Reward => new(nameof(Reward));
+
     public static HeraldModule From(string name)
     {
         var module = new HeraldModule(name);

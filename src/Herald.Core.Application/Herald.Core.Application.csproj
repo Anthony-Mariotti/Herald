@@ -19,8 +19,10 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="AnyDeals\Commands\" />
       <Folder Include="Guilds\Queries" />
-      <Folder Include="Modules\Queries" />
+      <Folder Include="Rewards\Commands\" />
+      <Folder Include="Rewards\Queries\" />
     </ItemGroup>
 
     <ItemGroup>

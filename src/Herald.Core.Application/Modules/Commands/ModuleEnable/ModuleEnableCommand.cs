@@ -32,7 +32,9 @@ public class ModuleEnableCommandHandler : IRequestHandler<ModuleEnableCommand>
             cancellationToken);
 
         if (guild is null)
+        {
             throw new NotFoundException(nameof(GuildEntity), request.GuildId);
+        }
 
         if (guild.EnableModule(request.Module))
         {

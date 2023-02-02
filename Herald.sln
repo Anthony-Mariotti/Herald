@@ -1,28 +1,35 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Herald.Bot", "src\Herald.Bot\Herald.Bot.csproj", "{2F6A6238-3F79-482F-97A7-A0E3FA17AEB9}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33122.133
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Herald.Bot", "src\Herald.Bot\Herald.Bot.csproj", "{2F6A6238-3F79-482F-97A7-A0E3FA17AEB9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Herald.Core", "src\Herald.Core\Herald.Core.csproj", "{09CBB63F-BC55-40BC-BBDE-F180B033F289}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Herald.Core", "src\Herald.Core\Herald.Core.csproj", "{09CBB63F-BC55-40BC-BBDE-F180B033F289}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Herald.Bot.Commands", "src\Herald.Bot.Commands\Herald.Bot.Commands.csproj", "{EC2DA977-D167-4B3C-8980-FCD9AE5A0A49}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Herald.Bot.Commands", "src\Herald.Bot.Commands\Herald.Bot.Commands.csproj", "{EC2DA977-D167-4B3C-8980-FCD9AE5A0A49}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Herald.Bot.Events", "src\Herald.Bot.Events\Herald.Bot.Events.csproj", "{BEC486D2-BFC9-4FFC-A28C-2BD18B449ACF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Herald.Bot.Events", "src\Herald.Bot.Events\Herald.Bot.Events.csproj", "{BEC486D2-BFC9-4FFC-A28C-2BD18B449ACF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Herald.Core.Infrastructure", "src\Herald.Core.Infrastructure\Herald.Core.Infrastructure.csproj", "{94C3778A-4570-41B6-9C44-A089E5F55D56}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Herald.Core.Infrastructure", "src\Herald.Core.Infrastructure\Herald.Core.Infrastructure.csproj", "{94C3778A-4570-41B6-9C44-A089E5F55D56}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Herald.Core.Domain", "src\Herald.Core.Domain\Herald.Core.Domain.csproj", "{6D00B529-9B12-4ED5-BC2D-77837E4BEB1A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Herald.Core.Domain", "src\Herald.Core.Domain\Herald.Core.Domain.csproj", "{6D00B529-9B12-4ED5-BC2D-77837E4BEB1A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Herald.Core.Application", "src\Herald.Core.Application\Herald.Core.Application.csproj", "{FFB47F21-857D-4837-B2C3-CF6D49A7F055}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Herald.Core.Application", "src\Herald.Core.Application\Herald.Core.Application.csproj", "{FFB47F21-857D-4837-B2C3-CF6D49A7F055}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{DE38BDEC-F9EF-4EDF-8C4B-CAF155C45D25}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Herald.Core.Application.IntegrationTests", "tests\Herald.Core.Application.IntegrationTests\Herald.Core.Application.IntegrationTests.csproj", "{81B6033D-F24B-4B6A-A0F0-A91CF452B8C9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Herald.Core.Application.IntegrationTests", "tests\Herald.Core.Application.IntegrationTests\Herald.Core.Application.IntegrationTests.csproj", "{81B6033D-F24B-4B6A-A0F0-A91CF452B8C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Herald.Core.Application.UnitTests", "tests\Herald.Core.Application.UnitTests\Herald.Core.Application.UnitTests.csproj", "{B89AFBEA-53A9-4DA3-B38B-142137501315}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Herald.Core.Application.UnitTests", "tests\Herald.Core.Application.UnitTests\Herald.Core.Application.UnitTests.csproj", "{B89AFBEA-53A9-4DA3-B38B-142137501315}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Herald.Core.Domain.UnitTests", "tests\Herald.Core.Domain.UnitTests\Herald.Core.Domain.UnitTests.csproj", "{757B8216-EBCA-4A5E-A9A1-CF2BFD9923F9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Herald.Core.Domain.UnitTests", "tests\Herald.Core.Domain.UnitTests\Herald.Core.Domain.UnitTests.csproj", "{757B8216-EBCA-4A5E-A9A1-CF2BFD9923F9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Herald.Bot.Audio", "src\Herald.Bot.Audio\Herald.Bot.Audio.csproj", "{91408B8E-16EC-4AC3-BD00-E5A68DB04C49}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Herald.Bot.Audio", "src\Herald.Bot.Audio\Herald.Bot.Audio.csproj", "{91408B8E-16EC-4AC3-BD00-E5A68DB04C49}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Herald.Bot.Reward", "src\Herald.Bot.Reward\Herald.Bot.Reward.csproj", "{34135DBD-C498-4250-B2D7-0DD9268D4EF7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Herald.Bot.AnyDeal", "src\Herald.Bot.AnyDeal\Herald.Bot.AnyDeal.csproj", "{0742C7AD-6F29-4BA1-869E-E2EE6C169276}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -74,10 +81,24 @@ Global
 		{91408B8E-16EC-4AC3-BD00-E5A68DB04C49}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91408B8E-16EC-4AC3-BD00-E5A68DB04C49}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{91408B8E-16EC-4AC3-BD00-E5A68DB04C49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34135DBD-C498-4250-B2D7-0DD9268D4EF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34135DBD-C498-4250-B2D7-0DD9268D4EF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34135DBD-C498-4250-B2D7-0DD9268D4EF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34135DBD-C498-4250-B2D7-0DD9268D4EF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0742C7AD-6F29-4BA1-869E-E2EE6C169276}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0742C7AD-6F29-4BA1-869E-E2EE6C169276}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0742C7AD-6F29-4BA1-869E-E2EE6C169276}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0742C7AD-6F29-4BA1-869E-E2EE6C169276}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{81B6033D-F24B-4B6A-A0F0-A91CF452B8C9} = {DE38BDEC-F9EF-4EDF-8C4B-CAF155C45D25}
 		{B89AFBEA-53A9-4DA3-B38B-142137501315} = {DE38BDEC-F9EF-4EDF-8C4B-CAF155C45D25}
 		{757B8216-EBCA-4A5E-A9A1-CF2BFD9923F9} = {DE38BDEC-F9EF-4EDF-8C4B-CAF155C45D25}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DACC8DBE-F6E6-46FD-BD65-5A665DA8F158}
 	EndGlobalSection
 EndGlobal

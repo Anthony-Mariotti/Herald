@@ -17,6 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Herald.Bot.AnyDeal\Herald.Bot.AnyDeal.csproj" />
       <ProjectReference Include="..\Herald.Bot.Audio\Herald.Bot.Audio.csproj" />
       <ProjectReference Include="..\Herald.Core.Application\Herald.Core.Application.csproj" />
       <ProjectReference Include="..\Herald.Core\Herald.Core.csproj" />

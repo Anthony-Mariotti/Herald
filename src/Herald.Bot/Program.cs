@@ -10,6 +10,7 @@ using Herald.Core.Configuration;
 using Herald.Core.Infrastructure.Common.Extensions;
 using Herald.Core.Infrastructure.Persistence;
 using Serilog;
+using Herald.Bot.AnyDeal;
 
 var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((context, services) =>
@@ -20,6 +21,7 @@ var host = Host.CreateDefaultBuilder(args)
         services.AddHeraldInfrastructure(context.Configuration);
         services.AddHeraldEvents();
         services.AddHeraldCommands();
+        services.AddHeraldAnyDeal();
         services.AddSingleton<DiscordClient>();
         services.AddSingleton(provider =>
         {

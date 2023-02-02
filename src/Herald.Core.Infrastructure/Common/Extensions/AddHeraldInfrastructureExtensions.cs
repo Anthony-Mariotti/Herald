@@ -32,12 +32,13 @@ public static partial class InfrastructureExtensions
                 })
             .EnableSensitiveDataLogging()
             .EnableDetailedErrors()
-            .LogTo(Console.WriteLine, LogLevel.Trace);
+            .LogTo(Console.WriteLine, LogLevel.Information);
         }, ServiceLifetime.Transient, ServiceLifetime.Transient);
 
         services.AddScoped<HeraldDbInitializer>();
 
-        services.AddTransient<IDateTime, DateTimeService>();
+        services.AddAnyDealService(configuration);
+        services.AddDateTimeService();
 
         return services;
     }
