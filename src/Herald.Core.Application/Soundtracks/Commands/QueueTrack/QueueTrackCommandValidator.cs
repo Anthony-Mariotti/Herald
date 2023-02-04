@@ -8,10 +8,10 @@ public class QueueTrackCommandValidator : AbstractValidator<QueueTrackCommand>
 {
     public QueueTrackCommandValidator()
     {
-        RuleFor(x => x.GuildId)
+        _ = RuleFor(x => x.GuildId)
             .NotEmpty().WithMessage($"{nameof(QueueTrackCommand)} requires a GuildId.");
 
-        RuleFor(x => x.Track)
+        _ = RuleFor(x => x.Track)
             .NotEmpty().WithMessage($"{nameof(QueueTrackCommand)} requires a Track.")
             .Must(HaveQueuedStatus)
             .WithMessage($"{nameof(QueueTrackCommand)} requires a track status of \"{nameof(TrackStatus.Queued)}\".");

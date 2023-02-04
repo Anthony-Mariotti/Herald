@@ -22,20 +22,22 @@ public static partial class HeraldBotExtensions
                 return client;
             });
 
-    private static void RegisterInteractivity(ref DiscordClient client)
-    {
-        client.UseInteractivity(new InteractivityConfiguration
+    private static void RegisterInteractivity(ref DiscordClient client) =>
+        _ = client.UseInteractivity(new InteractivityConfiguration
         {
             Timeout = TimeSpan.FromMinutes(2)
         });
-    }
-    
+
     private static void RegisterEvents(IServiceProvider provider, ref DiscordClient client)
     {
         RegisterDiscordGuildEvents(provider, ref client);
         RegisterDiscordChannelEvents(provider, ref client);
         RegisterDiscordMessageEvents(provider, ref client);
+        RegisterDiscordScheduledGuildEvents(provider, ref client);
         RegisterCommands(provider, ref client);
+
+        var messageHandler = provider.GetRequiredService<IUnknownEventHandler>();
+        client.UnknownEvent += messageHandler.OnUnknownEvent;
     }
     
     private static void RegisterDiscordChannelEvents(IServiceProvider provider, ref DiscordClient client)
@@ -86,6 +88,18 @@ public static partial class HeraldBotExtensions
         client.MessageReactionRemovedEmoji += messageHandler.OnMessageReactionRemovedEmoji;
         client.MessageReactionsCleared += messageHandler.OnMessageReactionsCleared;
         client.MessagesBulkDeleted += messageHandler.OnMessagesBulkDeleted;
+    }
+
+    private static void RegisterDiscordScheduledGuildEvents(IServiceProvider provider, ref DiscordClient client)
+    {
+        var messageHandler = provider.GetRequiredService<IScheduledGuildEventHandler>();
+
+        client.ScheduledGuildEventCompleted += messageHandler.OnScheduledGuildEventCompleted;
+        client.ScheduledGuildEventCreated += messageHandler.OnScheduledGuildEventCreated;
+        client.ScheduledGuildEventDeleted += messageHandler.OnScheduledGuildEventDeleted;
+        client.ScheduledGuildEventUpdated += messageHandler.OnScheduledGuildEventUpdated;
+        client.ScheduledGuildEventUserAdded += messageHandler.OnScheduledGuildEventUserAdded;
+        client.ScheduledGuildEventUserRemoved += messageHandler.OnScheduledGuildEventUserRemoved;
     }
 
     private static void RegisterCommands(IServiceProvider provider, ref DiscordClient client)

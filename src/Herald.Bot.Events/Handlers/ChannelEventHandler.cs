@@ -16,25 +16,25 @@ public class ChannelEventHandler : IChannelEventHandler
 
     public Task OnChannelCreated(DiscordClient client, ChannelCreateEventArgs args)
     {
-        _logger.LogDebug("Channel Created Event: {Guild}", args.Guild.Name);
+        _logger.LogDebug("Channel created event: {Guild}", args.Guild.Name);
         return Task.CompletedTask;
     }
 
     public Task OnChannelUpdated(DiscordClient client, ChannelUpdateEventArgs args)
     {
-        _logger.LogDebug("Channel Updated Event: {Guild}", args.Guild.Name);
+        _logger.LogDebug("Channel updated event: {Guild}", args.Guild.Name);
         return Task.CompletedTask;
     }
 
     public Task OnChannelDeleted(DiscordClient client, ChannelDeleteEventArgs args)
     {
-        _logger.LogDebug("Channel Deleted Event: {Guild}", args.Guild.Name);
+        _logger.LogDebug("Channel deleted event: {Guild}", args.Guild.Name);
         return Task.CompletedTask;
     }
 
     public Task OnChannelPinsUpdated(DiscordClient client, ChannelPinsUpdateEventArgs args)
     {
-        _logger.LogDebug("Channel Pins Updated Event: {Guild}", args.Guild.Name);
+        _logger.LogDebug("Channel pins updated event: {Guild}", args.Guild.Name);
         return Task.CompletedTask;
     }
 }

@@ -1,16 +1,15 @@
 ﻿using FluentValidation;
-using Herald.Core.Application.Abstractions;
 
 namespace Herald.Core.Application.Guilds.Commands.GuildCreated;
 
 public class GuildCreatedCommandValidator : AbstractValidator<GuildCreatedCommand>
 {
-    public GuildCreatedCommandValidator(IHeraldDbContext context)
+    public GuildCreatedCommandValidator()
     {
-        RuleFor(v => v.GuildId)
+        _ = RuleFor(v => v.GuildId)
             .NotEmpty().WithMessage("GuildId is required.");
 
-        RuleFor(v => v.OwnerId)
+        _ = RuleFor(v => v.OwnerId)
             .NotEmpty().WithMessage("OwnerId is required.");
     }
 }

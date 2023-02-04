@@ -33,11 +33,14 @@ public class PauseTrackCommandHandler : IRequestHandler<PauseTrackCommand>
             .SingleOrDefaultAsync(x => x.GuildId.Equals(request.GuildId),
             cancellationToken);
 
-        if (queue is null) throw new NotFoundException(nameof(QueueEntity), request.GuildId);
+        if (queue is null)
+        {
+            throw new NotFoundException(nameof(QueueEntity), request.GuildId);
+        }
 
         queue.GetPlayingTrack()?.Pause(TrackStatusReason.UserPaused);
 
-        await _context.SaveChangesAsync(cancellationToken);
+        _ = await _context.SaveChangesAsync(cancellationToken);
         return Unit.Value;
     }
 }

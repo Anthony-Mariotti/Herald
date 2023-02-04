@@ -25,12 +25,14 @@ public class ResumeTrackCommandHandler : IRequestHandler<ResumeTrackCommand>
             .SingleOrDefaultAsync(x => x.GuildId.Equals(request.GuildId), cancellationToken);
 
         if (queue is null)
+        {
             throw new NotFoundException(nameof(QueueEntity), request.GuildId);
-        
+        }
+
         queue.GetPausedTrack()?.Play(TrackStatusReason.UserResumed);
 
         // TODO: Add Track Resumed Domain Event
-        await _context.SaveChangesAsync(cancellationToken);
+        _ = await _context.SaveChangesAsync(cancellationToken);
         return Unit.Value;
     }
 }

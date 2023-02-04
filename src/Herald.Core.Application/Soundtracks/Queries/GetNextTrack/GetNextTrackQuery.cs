@@ -23,9 +23,9 @@ public class GetNextTrackQueryHandler : IRequestHandler<GetNextTrackQuery, Queue
             .Include(x => x.Tracks)
             .SingleOrDefaultAsync(x => x.GuildId.Equals(request.GuildId), cancellationToken);
 
-        if (queue is null || !queue.Tracks.Any()) return null;
-
-        return _mapper.Map<QueuedTrack?>(queue.GetNextTrack());
+        return queue is null || !queue.Tracks.Any()
+            ? null
+            : _mapper.Map<QueuedTrack?>(queue.GetNextTrack());
     }
 }
 

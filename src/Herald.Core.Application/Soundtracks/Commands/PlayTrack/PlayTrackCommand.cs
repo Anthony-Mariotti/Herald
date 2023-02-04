@@ -19,20 +19,17 @@ public record PlayTrackCommand : IRequest
 public class PlayTrackCommandHandler : IRequestHandler<PlayTrackCommand>
 {
     private readonly IHeraldDbContext _context;
-    private readonly ILogger<PlayTrackCommandHandler> _logger;
 
-    public PlayTrackCommandHandler(IHeraldDbContext context, ILogger<PlayTrackCommandHandler> logger)
+    public PlayTrackCommandHandler(IHeraldDbContext context)
     {
         _context = context;
-        _logger = logger;
     }
     
     public async Task<Unit> Handle(PlayTrackCommand request, CancellationToken cancellationToken)
     {
         var queue = await _context.Queues
             .Include(x => x.Tracks)
-            .SingleOrDefaultAsync(x => x.GuildId.Equals(request.GuildId),
-            cancellationToken);
+            .SingleOrDefaultAsync(x => x.GuildId.Equals(request.GuildId), cancellationToken);
 
         if (queue is null)
         {
@@ -41,16 +38,16 @@ public class PlayTrackCommandHandler : IRequestHandler<PlayTrackCommand>
             queue.AddTrack(request.Track);
             queue.AddDomainEvent(new TrackPlayingEvent(request.GuildId, request.Track));
 
-            _context.Queues.Add(queue);
+            _ = _context.Queues.Add(queue);
             
-            await _context.SaveChangesAsync(cancellationToken);
+            _ = await _context.SaveChangesAsync(cancellationToken);
             return Unit.Value;
         }
         
         queue.AddTrack(request.Track);
         queue.AddDomainEvent(new TrackPlayingEvent(request.GuildId, request.Track));
 
-        await _context.SaveChangesAsync(cancellationToken);
+        _ = await _context.SaveChangesAsync(cancellationToken);
         
         return Unit.Value;
     }

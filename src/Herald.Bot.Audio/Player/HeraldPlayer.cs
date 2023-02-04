@@ -36,7 +36,7 @@ public sealed class HeraldPlayer : LavalinkPlayer
         {
             case TrackEndReason.Finished:
                 _logger.LogTrace("Running Track Finished for {GuildId}", GuildId);
-                await _mediator.Send(new TrackEndedCommand
+                _ = await _mediator.Send(new TrackEndedCommand
                 {
                     GuildId = GuildId,
                     Identifier = endedTrack.TrackIdentifier,
@@ -45,15 +45,20 @@ public sealed class HeraldPlayer : LavalinkPlayer
 
                 if (eventArgs.MayStartNext)
                 {
-                    if (await PlayNextTrack()) return;
+                    if (await PlayNextTrack())
+                    {
+                        return;
+                    }
 
                     if (DisconnectOnStop)
+                    {
                         await DisconnectAsync();
+                    }
                 }
                 break;
             case TrackEndReason.LoadFailed:
                 _logger.LogTrace("Running Loading Failed for {GuildId}", GuildId);
-                await _mediator.Send(new TrackEndedCommand
+                _ = await _mediator.Send(new TrackEndedCommand
                 {
                     GuildId = GuildId,
                     Identifier = endedTrack.TrackIdentifier,
@@ -62,15 +67,20 @@ public sealed class HeraldPlayer : LavalinkPlayer
                 
                 if (eventArgs.MayStartNext)
                 {
-                    if (await PlayNextTrack()) return;
+                    if (await PlayNextTrack())
+                    {
+                        return;
+                    }
 
                     if (DisconnectOnStop)
+                    {
                         await DisconnectAsync();
+                    }
                 }
                 break;
             case TrackEndReason.Stopped:
                 _logger.LogTrace("Running Track Stopped for {GuildId}", GuildId);
-                await _mediator.Send(new TrackEndedCommand
+                _ = await _mediator.Send(new TrackEndedCommand
                 {
                     GuildId = GuildId,
                     Identifier = endedTrack.TrackIdentifier,
@@ -78,11 +88,14 @@ public sealed class HeraldPlayer : LavalinkPlayer
                 });
                 
                 if (DisconnectOnStop)
+                {
                     await DisconnectAsync();
+                }
+
                 break;
             case TrackEndReason.Replaced:
                 _logger.LogTrace("Running Track Replaced for {GuildId}", GuildId);
-                await _mediator.Send(new TrackEndedCommand
+                _ = await _mediator.Send(new TrackEndedCommand
                 {
                     GuildId = GuildId,
                     Identifier = endedTrack.TrackIdentifier,
@@ -91,15 +104,20 @@ public sealed class HeraldPlayer : LavalinkPlayer
 
                 if (eventArgs.MayStartNext)
                 {
-                    if (await PlayNextTrack()) return;
+                    if (await PlayNextTrack())
+                    {
+                        return;
+                    }
 
                     if (DisconnectOnStop)
+                    {
                         await DisconnectAsync();
+                    }
                 }
                 break;
             case TrackEndReason.CleanUp:
                 _logger.LogTrace("Running Track CleanUp for {GuildId}", GuildId);
-                await _mediator.Send(new TrackEndedCommand
+                _ = await _mediator.Send(new TrackEndedCommand
                 {
                     GuildId = GuildId,
                     Identifier = endedTrack.TrackIdentifier,
@@ -117,17 +135,20 @@ public sealed class HeraldPlayer : LavalinkPlayer
     {
         var nextTrack = await _mediator.Send(new GetNextTrackQuery(GuildId));
 
-        if (nextTrack is null) return false;
-        
+        if (nextTrack is null)
+        {
+            return false;
+        }
+
         _logger.LogTrace("Starting next track {TrackIdentifier} on {GuildId}", nextTrack.Identifier, GuildId);
         var track = nextTrack.GetLavalinkTrack();
                 
         var channel = await _client.GetChannelAsync(nextTrack.NotifyChannelId);
         var user = await _client.GetUserAsync(nextTrack.RequestUserId);
 
-        await _client.SendMessageAsync(channel, HeraldAudioMessage.NowPlayingEmbed(track, user));
+        _ = await _client.SendMessageAsync(channel, HeraldAudioMessage.NowPlayingEmbed(track, user));
         await PlayAsync(track);
-        await _mediator.Send(new PlayTrackFromQueueCommand
+        _ = await _mediator.Send(new PlayTrackFromQueueCommand
         {
             GuildId = GuildId,
             TrackIdentifier = nextTrack.Identifier

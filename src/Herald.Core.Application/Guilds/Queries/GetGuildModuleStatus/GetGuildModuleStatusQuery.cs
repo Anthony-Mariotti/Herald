@@ -1,7 +1,7 @@
 ﻿using Herald.Core.Application.Abstractions;
 using Herald.Core.Application.Exceptions;
 using Herald.Core.Domain.Entities.Guilds;
-using Herald.Core.Domain.ValueObjects.Modules;
+using Herald.Core.Domain.Entities.Modules;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,7 +11,7 @@ public record GetGuildModuleStatusQuery : IRequest<bool>
 {
     public ulong GuildId { get; init; }
 
-    public HeraldModule Module { get; init; } = default!;
+    public Module Module { get; init; } = default!;
 }
 
 public class GetGuildModuleStatusQueryHandler : IRequestHandler<GetGuildModuleStatusQuery, bool>
@@ -27,11 +27,10 @@ public class GetGuildModuleStatusQueryHandler : IRequestHandler<GetGuildModuleSt
     {
         var guild = await _context.Guilds
             .Include(x => x.Modules)
-            .SingleOrDefaultAsync(x => x.GuildId.Equals(request.GuildId), cancellationToken);
+            .SingleOrDefaultAsync(x => x.Id.Equals(request.GuildId), cancellationToken);
 
-        if (guild is null)
-            throw new NotFoundException(nameof(GuildEntity), request.GuildId);
-
-        return guild.Modules.Contains(request.Module);
+        return guild is null
+            ? throw new NotFoundException(nameof(Guild), request.GuildId)
+            : guild.HasAccess(request.Module);
     }
 }

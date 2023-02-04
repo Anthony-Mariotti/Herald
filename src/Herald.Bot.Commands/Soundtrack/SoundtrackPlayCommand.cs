@@ -26,7 +26,10 @@ public class SoundtrackPlayCommand : SoundtrackBaseCommand
             _logger.LogInformation("Soundtrack Play Command Executed by {User} in {Guild}", context.User.Id,
                 context.Guild.Id);
 
-            if (!await CommandPreCheckAsync(context)) return;
+            if (!await CommandPreCheckAsync(context))
+            {
+                return;
+            }
 
             await HeraldAudio.PlayAsync(context, search, SearchMode.YouTube);
         }

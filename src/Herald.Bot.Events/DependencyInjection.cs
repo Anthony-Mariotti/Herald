@@ -10,5 +10,7 @@ public static class DependencyInjection
         => services
             .AddSingleton<IGuildEventHandler, GuildEventHandler>()
             .AddSingleton<IMessageEventHandler, MessageEventHandler>()
-            .AddSingleton<IChannelEventHandler, ChannelEventHandler>();
+            .AddSingleton<IChannelEventHandler, ChannelEventHandler>()
+            .AddSingleton<IScheduledGuildEventHandler, ScheduledGuildEventHandler>()
+            .AddSingleton<IUnknownEventHandler, UnknownEventHandler>();
 }

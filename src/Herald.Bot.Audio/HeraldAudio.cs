@@ -42,9 +42,16 @@ public class HeraldAudio : IHeraldAudio
 
     public async Task<LavalinkTrack?> SearchAsync(DiscordInteraction context, string search, SearchMode mode)
     {
-        if (context == null) throw new ArgumentNullException(nameof(context));
+        _logger.LogDebug("HeraldAudio::SearchAsync({Search}, {Mode})", search, mode);
+        if (context == null)
+        {
+            throw new ArgumentNullException(nameof(context));
+        }
+
         if (string.IsNullOrWhiteSpace(search))
+        {
             throw new ArgumentException("Value cannot be null or whitespace.", nameof(search));
+        }
 
         var result = await _service.GetTrackAsync(search, mode);
 
@@ -53,9 +60,15 @@ public class HeraldAudio : IHeraldAudio
 
     public async Task<LavalinkTrack?> SearchAsync(InteractionContext context, string search, SearchMode mode)
     {
-        if (context == null) throw new ArgumentNullException(nameof(context));
+        _logger.LogDebug("HeraldAudio::SearchAsync({Search}, {Mode})", search, mode);
+        if (context == null)
+        {
+            throw new ArgumentNullException(nameof(context));
+        }
         if (string.IsNullOrWhiteSpace(search))
+        {
             throw new ArgumentException("Value cannot be null or whitespace.", nameof(search));
+        }
 
         var result = await _service.GetTrackAsync(search, mode);
 
@@ -64,9 +77,15 @@ public class HeraldAudio : IHeraldAudio
 
     public async Task PlayAsync(InteractionContext context, string search, SearchMode mode)
     {
-        if (context == null) throw new ArgumentNullException(nameof(context));
+        _logger.LogDebug("HeraldAudio::PlayAsync({Search}, {Mode})", search, mode);
+        if (context == null)
+        {
+            throw new ArgumentNullException(nameof(context));
+        }
         if (string.IsNullOrWhiteSpace(search))
+        {
             throw new ArgumentException("Value cannot be null or whitespace.", nameof(search));
+        }
 
         await EnsureGuildHasPlayerAsync(context);
 
@@ -86,19 +105,17 @@ public class HeraldAudio : IHeraldAudio
 
         await context.CreateResponseAsync(HeraldAudioMessage.NowPlayingEmbed(result, context.Member));
 
-        await _mediator.Send(new PlayTrackCommand
-        {
-            GuildId = context.Guild.Id,
-            Track = QueuedTrackValue.Create(result, context.Channel.Id, context.Member.Id, TrackStatus.Playing,
-                TrackStatusReason.UserAdded)
-        });
+        _ = await _mediator.Send(new PlayTrackCommand { GuildId = context.Guild.Id, Track = QueuedTrackValue.Create(result, context.Channel.Id, context.Member.Id, TrackStatus.Playing, TrackStatusReason.UserAdded) });
         
         await _player.PlayAsync(result);
     }
 
     public async Task SkipAsync(InteractionContext context)
     {
-        if (context == null) throw new ArgumentNullException(nameof(context));
+        if (context == null)
+        {
+            throw new ArgumentNullException(nameof(context));
+        }
 
         await EnsureGuildHasPlayerAsync(context);
         
@@ -123,18 +140,20 @@ public class HeraldAudio : IHeraldAudio
         
         await _player.PlayAsync(nextTrack.GetLavalinkTrack());
         await context.CreateResponseAsync(HeraldAudioMessage.NowPlayingEmbed(track, user));
-        await _mediator.Send(new PlayTrackFromQueueCommand
-        {
-            GuildId = context.Guild.Id,
-            TrackIdentifier = nextTrack.Identifier
-        });
+        _ = await _mediator.Send(new PlayTrackFromQueueCommand { GuildId = context.Guild.Id, TrackIdentifier = nextTrack.Identifier });
     }
     
     public async Task EnqueueAsync(DiscordInteraction context, string search, SearchMode mode)
     {
-        if (context == null) throw new ArgumentNullException(nameof(context));
+        _logger.LogDebug("HeraldAudio::EnqueueAsync({Search}, {Mode})", search, mode);
+        if (context == null)
+        {
+            throw new ArgumentNullException(nameof(context));
+        }
         if (string.IsNullOrWhiteSpace(search))
+        {
             throw new ArgumentException("Value cannot be null or whitespace.", nameof(search));
+        }
         
         var result = await SearchAsync(context, search, mode);
 
@@ -150,9 +169,15 @@ public class HeraldAudio : IHeraldAudio
 
     public async Task EnqueueAsync(InteractionContext context, string search, SearchMode mode)
     {
-        if (context == null) throw new ArgumentNullException(nameof(context));
+        _logger.LogDebug("HeraldAudio::EnqueueAsync({Search}, {Mode})", search, mode);
+        if (context == null)
+        {
+            throw new ArgumentNullException(nameof(context));
+        }
         if (string.IsNullOrWhiteSpace(search))
+        {
             throw new ArgumentException("Value cannot be null or whitespace.", nameof(search));
+        }
         
         var result = await SearchAsync(context, search, mode);
 
@@ -167,8 +192,14 @@ public class HeraldAudio : IHeraldAudio
     
     public async Task EnqueueAsync(DiscordInteraction interaction, LavalinkTrack track, bool queueOnly = false)
     {
-        if (interaction is null) throw new ArgumentNullException(nameof(interaction));
-        if (track is null) throw new ArgumentNullException(nameof(track));
+        if (interaction is null)
+        {
+            throw new ArgumentNullException(nameof(interaction));
+        }
+        if (track is null)
+        {
+            throw new ArgumentNullException(nameof(track));
+        }
 
         if (!queueOnly)
         {
@@ -191,18 +222,19 @@ public class HeraldAudio : IHeraldAudio
         await interaction.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder()
             .AddEmbed(HeraldAudioMessage.AddedToQueueEmbed(track, interaction.User)));
 
-        await _mediator.Send(new QueueTrackCommand
-        {
-            GuildId = interaction.Guild.Id,
-            Track = QueuedTrackValue.Create(track, interaction.Channel.Id, interaction.User.Id, TrackStatus.Queued,
-                TrackStatusReason.UserAdded)
-        });
+        _ = await _mediator.Send(new QueueTrackCommand { GuildId = interaction.Guild.Id, Track = QueuedTrackValue.Create(track, interaction.Channel.Id, interaction.User.Id, TrackStatus.Queued, TrackStatusReason.UserAdded) });
     }
 
     public async Task EnqueueAsync(InteractionContext context, LavalinkTrack track, bool queueOnly = false)
     {
-        if (context is null) throw new ArgumentNullException(nameof(context));
-        if (track is null) throw new ArgumentNullException(nameof(track));
+        if (context is null)
+        {
+            throw new ArgumentNullException(nameof(context));
+        }
+        if (track is null)
+        {
+            throw new ArgumentNullException(nameof(track));
+        }
 
         if (!queueOnly)
         {
@@ -224,47 +256,47 @@ public class HeraldAudio : IHeraldAudio
         
         await context.CreateResponseAsync(HeraldAudioMessage.AddedToQueueEmbed(track, context.Member));
 
-        await _mediator.Send(new QueueTrackCommand
-        {
-            GuildId = context.Guild.Id,
-            Track = QueuedTrackValue.Create(track, context.Channel.Id, context.Member.Id, TrackStatus.Queued,
-                TrackStatusReason.UserAdded)
-        });
+        _ = await _mediator.Send(new QueueTrackCommand { GuildId = context.Guild.Id, Track = QueuedTrackValue.Create(track, context.Channel.Id, context.Member.Id, TrackStatus.Queued, TrackStatusReason.UserAdded) });
     }
 
     public async Task DequeueAsync(InteractionContext context, QueuedTrackValue track)
     {
-        if (context is null) throw new ArgumentNullException(nameof(context));
-        if (track is null) throw new ArgumentNullException(nameof(track));
+        if (context is null)
+        {
+            throw new ArgumentNullException(nameof(context));
+        }
+        if (track is null)
+        {
+            throw new ArgumentNullException(nameof(track));
+        }
 
         await EnsureGuildHasPlayerAsync(context);
 
         await context.CreateResponseAsync(HeraldAudioMessage.TrackDequeuedEmbed(track, context.Member));
 
-        await _mediator.Send(new DequeueTrackCommand(context.Guild.Id, track));
+        _ = await _mediator.Send(new DequeueTrackCommand(context.Guild.Id, track));
     }
 
-    public Task GetQueueAsync(InteractionContext context)
-    {
-        throw new NotImplementedException();
-    }
+    public Task GetQueueAsync(InteractionContext context) => throw new NotImplementedException();
 
-    public Task PlayQueueAsync(InteractionContext context)
-    {
+    public Task PlayQueueAsync(InteractionContext context) =>
         // TODO: Check if Guild Has Track Queued
-        
+
         // TODO: Get Queued Track
-        
+
         // TODO: Send Message and Play Track
-        
+
         // TODO: Send Play Track From Queue
 
         throw new NotImplementedException();
-    }
 
     public async Task StopAsync(InteractionContext context)
     {
-        if (context is null) throw new ArgumentNullException(nameof(context));
+        _logger.LogDebug("HeraldAudio::StopAsync()");
+        if (context is null)
+        {
+            throw new ArgumentNullException(nameof(context));
+        }
 
         await EnsureGuildHasPlayerAsync(context);
 
@@ -275,7 +307,10 @@ public class HeraldAudio : IHeraldAudio
 
     public async Task PauseAsync(InteractionContext context)
     {
-        if (context is null) throw new ArgumentNullException(nameof(context));
+        if (context is null)
+        {
+            throw new ArgumentNullException(nameof(context));
+        }
 
         await EnsureGuildHasPlayerAsync(context);
 
@@ -283,12 +318,15 @@ public class HeraldAudio : IHeraldAudio
         
         await context.CreateResponseAsync(HeraldAudioMessage.PausedEmbed(context.Member));
 
-        await _mediator.Send(new PauseTrackCommand(context.Guild.Id));
+        _ = await _mediator.Send(new PauseTrackCommand(context.Guild.Id));
     }
 
     public async Task ResumeAsync(InteractionContext context)
     {
-        if (context == null) throw new ArgumentNullException(nameof(context));
+        if (context == null)
+        {
+            throw new ArgumentNullException(nameof(context));
+        }
 
         await EnsureGuildHasPlayerAsync(context);
 
@@ -302,7 +340,7 @@ public class HeraldAudio : IHeraldAudio
         
         await context.CreateResponseAsync(HeraldAudioMessage.ResumedEmbed(_player.CurrentTrack, context.Member));
 
-        await _mediator.Send(new ResumeTrackCommand(context.Guild.Id));
+        _ = await _mediator.Send(new ResumeTrackCommand(context.Guild.Id));
     }
     
     private async Task EnsureGuildHasPlayerAsync(DiscordInteraction interaction)
@@ -310,7 +348,9 @@ public class HeraldAudio : IHeraldAudio
         if (_service.HasPlayer(interaction.Guild.Id))
         {
             if (_player.GuildId.Equals(interaction.Guild.Id))
+            {
                 return;
+            }
             
             _player = _service.GetPlayer<HeraldPlayer>(interaction.Guild.Id) ??
                       throw new InvalidOperationException("Failed to load player for guild.");
@@ -320,7 +360,9 @@ public class HeraldAudio : IHeraldAudio
         var channel = await _client.GetChannelAsync(_player.VoiceChannelId!.Value);
 
         if (!channel.Users.Any(x => x.Id.Equals(interaction.User.Id)))
+        {
             throw new InvalidOperationException("Must provide a voice channel id to join.");
+        }
 
         _player = await _service.JoinAsync(() => _player, interaction.Guild.Id, ((DiscordMember)interaction.User).VoiceState.Channel.Id);
     }
@@ -330,7 +372,9 @@ public class HeraldAudio : IHeraldAudio
         if (_service.HasPlayer(context.Guild.Id))
         {
             if (_player.GuildId.Equals(context.Guild.Id))
+            {
                 return;
+            }
             
             _player = _service.GetPlayer<HeraldPlayer>(context.Guild.Id) ??
                       throw new InvalidOperationException("Failed to load player for guild.");
@@ -338,7 +382,9 @@ public class HeraldAudio : IHeraldAudio
         }
 
         if (context.Member.VoiceState.Channel is null)
+        {
             throw new ArgumentNullException(nameof(context.Member.VoiceState.Channel), "Must provide a voice channel id to join.");
+        }
         
         _player = await _service.JoinAsync(() => _player, context.Guild.Id, context.Member.VoiceState.Channel.Id);
     }

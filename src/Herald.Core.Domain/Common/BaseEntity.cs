@@ -1,7 +1,8 @@
 ﻿namespace Herald.Core.Domain.Common;
 
-public class BaseEntity : BaseDomainEntity
+public class BaseEntity : BaseEntity<long> { }
+
+public class BaseEntity<T> where T : struct
 {
-    // ReSharper disable once UnusedAutoPropertyAccessor.Global
-    public long Id { get; set; }
+    public T Id { get; set; }
 }

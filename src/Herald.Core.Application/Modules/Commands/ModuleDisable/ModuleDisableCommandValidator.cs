@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using Herald.Core.Domain.ValueObjects.Modules;
+using Herald.Core.Domain.Entities.Modules;
 
 namespace Herald.Core.Application.Modules.Commands.ModuleDisable;
 
@@ -7,14 +7,14 @@ public class ModuleDisableCommandValidator : AbstractValidator<ModuleDisableComm
 {
     public ModuleDisableCommandValidator()
     {
-        RuleFor(x => x.GuildId)
+        _ = RuleFor(x => x.GuildId)
             .NotEmpty().WithMessage("GuildId is required.");
 
-        RuleFor(x => x.Module)
+        _ = RuleFor(x => x.Module)
             .NotEmpty().WithMessage("ModuleName is required")
             .Must(BeAnAvailableModule).WithMessage("The specified module is not supported.");
     }
     
-    private static bool BeAnAvailableModule(HeraldModule module) =>
-        HeraldModule.HaveSupportFor(module);
+    private static bool BeAnAvailableModule(Module module) =>
+        Module.AvailableModules.Contains(module);
 }

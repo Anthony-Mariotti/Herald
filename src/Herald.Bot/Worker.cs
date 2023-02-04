@@ -40,13 +40,13 @@ public class Worker : BackgroundService
         _logger.LogInformation("Herald is now connected and ready");
     }
 
-    public override Task StopAsync(CancellationToken cancellationToken)
+    public override async Task StopAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("Shutting down Herald");
 
         _audioService.Dispose();
-        _discord.DisconnectAsync();
+        await _discord.DisconnectAsync();
 
-        return base.StopAsync(cancellationToken);
+        await base.StopAsync(cancellationToken);
     }
 }

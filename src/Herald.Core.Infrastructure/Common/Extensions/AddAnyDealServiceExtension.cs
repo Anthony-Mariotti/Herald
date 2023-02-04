@@ -8,12 +8,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Polly;
 using Polly.Extensions.Http;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 
 namespace Herald.Core.Infrastructure.Common.Extensions;
 
 public static partial class InfrastructureExtensions
 {
+    [SuppressMessage("Style", "IDE0058:Expression value is never used", Justification = "Readability")]
     public static IServiceCollection AddAnyDealService(this IServiceCollection services, IConfiguration configuration)
     {
         var apiKey = configuration.GetSection(nameof(HeraldConfig)).GetValue<string>("AnyDealApiKey");
@@ -38,11 +40,9 @@ public static partial class InfrastructureExtensions
         return services;
     }
 
-    private static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
-    {
-        return HttpPolicyExtensions
+    private static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy() =>
+        HttpPolicyExtensions
             .HandleTransientHttpError()
             .OrResult(msg => msg.StatusCode == HttpStatusCode.NotFound)
             .WaitAndRetryAsync(6, attempt => TimeSpan.FromSeconds(Math.Pow(2, attempt)));
-    }
 }

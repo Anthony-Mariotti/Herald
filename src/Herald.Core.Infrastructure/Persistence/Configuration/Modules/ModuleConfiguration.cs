@@ -1,18 +1,26 @@
-﻿using Herald.Core.Domain.ValueObjects.Modules;
+﻿using Herald.Core.Domain.Entities.Modules;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Herald.Core.Infrastructure.Persistence.Configuration.Modules;
 
-public class ModuleConfiguration : IEntityTypeConfiguration<HeraldModule>
+public class ModuleConfiguration : IEntityTypeConfiguration<Module>
 {
-    public void Configure(EntityTypeBuilder<HeraldModule> builder)
+    public void Configure(EntityTypeBuilder<Module> builder)
     {
-        builder.ToTable("GuildModules");
+        builder.ToTable("Modules");
 
-        builder.Property<long>("Id")
+        builder.HasKey(x => x.Id);
+        builder.Property(x => x.Id)
+            .ValueGeneratedNever()
             .IsRequired();
 
-        builder.HasKey("Id");
+        builder.Property(x => x.Name)
+            .HasMaxLength(30)
+            .IsRequired();
+
+        builder.Property(x => x.Released)
+            .HasDefaultValue(false)
+            .IsRequired();
     }
 }

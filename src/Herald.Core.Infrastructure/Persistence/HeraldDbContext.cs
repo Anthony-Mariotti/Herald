@@ -1,6 +1,9 @@
-﻿using System.Reflection;
-using Herald.Core.Application.Abstractions;
+﻿using Herald.Core.Application.Abstractions;
+using Herald.Core.Domain.Entities.Economies;
 using Herald.Core.Domain.Entities.Guilds;
+using Herald.Core.Domain.Entities.Leveling;
+using Herald.Core.Domain.Entities.Members;
+using Herald.Core.Domain.Entities.Modules;
 using Herald.Core.Domain.Entities.Soundtracks;
 using Herald.Core.Infrastructure.Common.Extensions;
 using MediatR;
@@ -21,13 +24,21 @@ public class HeraldDbContext : DbContext, IHeraldDbContext
         _mediator = mediator;
     }
 
-    public DbSet<GuildEntity> Guilds => Set<GuildEntity>();
+    public DbSet<Guild> Guilds => Set<Guild>();
 
     public DbSet<QueueEntity> Queues => Set<QueueEntity>();
 
+    public DbSet<Economy> Economies => Set<Economy>();
+
+    public DbSet<Level> Levels => Set<Level>();
+
+    public DbSet<Member> Members => Set<Member>();
+
+    public DbSet<Module> Modules => Set<Module>();
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        _ = builder.ApplyConfigurationsFromAssembly(System.Reflection.Assembly.GetExecutingAssembly());
         
         base.OnModelCreating(builder);
     }

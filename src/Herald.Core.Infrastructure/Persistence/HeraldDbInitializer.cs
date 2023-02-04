@@ -1,14 +1,17 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Herald.Core.Application.Abstractions;
+using Herald.Core.Domain.Entities.Modules;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Linq;
 
 namespace Herald.Core.Infrastructure.Persistence;
 
 public class HeraldDbInitializer
 {
     private readonly ILogger<HeraldDbInitializer> _logger;
-    private readonly HeraldDbContext _context;
+    private readonly IHeraldDbContext _context;
 
-    public HeraldDbInitializer(ILogger<HeraldDbInitializer> logger, HeraldDbContext context)
+    public HeraldDbInitializer(ILogger<HeraldDbInitializer> logger, IHeraldDbContext context)
     {
         _logger = logger;
         _context = context;
@@ -46,6 +49,53 @@ public class HeraldDbInitializer
 
     public async Task TrySeedAsync()
     {
-        await _context.SaveChangesAsync();
+        await SeedModules();
+        _ = await _context.SaveChangesAsync();
+    }
+
+    private async Task SeedModules()
+    {
+        var existing = await _context.Modules.ToListAsync();
+        var missing = Module.AvailableModules.Except(existing, new ModuleExistingComparer());
+        var updated = Module.AvailableModules.Except(existing, new ModuleUpdatedComparer());
+        
+        if (missing.Any())
+        {
+            foreach(var module in missing)
+            {
+                _context.Entry(module).State = EntityState.Added;
+            }
+            await _context.Modules.AddRangeAsync(existing);
+        }
+
+        if (updated.Any())
+        {
+            foreach (var existingModule in existing.Where(x => updated.Select(x => x.Id).Contains(x.Id)))
+            {
+                var updatedModule = updated.FirstOrDefault(x => x.Id == existingModule.Id);
+
+                if (updatedModule is not null)
+                {
+                    if (existingModule.Name != updatedModule.Name)
+                    {
+                        existingModule.SetName(updatedModule.Name);
+                    }
+
+                    if (existingModule.Released != updatedModule.Released)
+                    {
+                        if (updatedModule.Released)
+                        {
+                            existingModule.Release();
+                        }
+                        else
+                        {
+                            existingModule.UnRelease();
+                        }
+                    }
+
+                    _context.Entry(existingModule).State = EntityState.Modified;
+                }
+            }
+        }
     }
 }

@@ -2,7 +2,7 @@
 using DSharpPlus.SlashCommands;
 using Herald.Bot.Audio.Abstractions;
 using Herald.Core.Application.Guilds.Queries.GetGuildModuleStatus;
-using Herald.Core.Domain.ValueObjects.Modules;
+using Herald.Core.Domain.Entities.Modules;
 using Herald.Core.Utility;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -28,9 +28,15 @@ public class SoundtrackBaseCommand : ApplicationCommandModule
     {
         _logger.LogTrace("Running Soundtrack Pre-Check for {Guild}", context.Guild.Id);
         
-        if (!await IsModuleEnabled(context)) return false;
+        if (!await IsModuleEnabled(context))
+            {
+            return false;
+        }
 
-        if (context.Member.VoiceState?.Channel is not null) return true;
+        if (context.Member.VoiceState?.Channel is not null)
+            {
+            return true;
+        }
         
         await context.CreateResponseAsync(new DiscordInteractionResponseBuilder().WithTitle("Invalid usage")
             .WithContent("You are not in a voice channel."));
@@ -42,7 +48,7 @@ public class SoundtrackBaseCommand : ApplicationCommandModule
         var status = await Mediator.Send(new GetGuildModuleStatusQuery
         {
             GuildId = context.Guild.Id,
-            Module = HeraldModule.Soundtrack
+            Module = Module.Soundtrack
         });
 
         if (!status)

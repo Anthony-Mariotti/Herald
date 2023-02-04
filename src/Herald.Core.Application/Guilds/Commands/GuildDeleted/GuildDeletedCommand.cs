@@ -24,15 +24,17 @@ public class GuildDeletedCommandHandler : IRequestHandler<GuildDeletedCommand>
         // var filter = Builders<GuildEntity>.Filter
         //     .Where(x => x.GuildId.Equals(request.guildId));
 
-        var guild = await _context.Guilds.SingleOrDefaultAsync(x => x.GuildId.Equals(request.GuildId),
+        var guild = await _context.Guilds.SingleOrDefaultAsync(x => x.Id.Equals(request.GuildId),
             cancellationToken);
 
         if (guild is null)
-            throw new NotFoundException(nameof(GuildEntity), request.GuildId);
+        {
+            throw new NotFoundException(nameof(Guild), request.GuildId);
+        }
 
         guild.LeftServer(_dateTime.UtcNow);
 
-        await _context.SaveChangesAsync(cancellationToken);
+        _ = await _context.SaveChangesAsync(cancellationToken);
         
         return Unit.Value;
     }

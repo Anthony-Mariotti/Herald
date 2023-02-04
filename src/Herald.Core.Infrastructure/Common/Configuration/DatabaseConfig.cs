@@ -24,6 +24,7 @@ public class DatabaseConfig
 
     public DatabaseConfigFeatures Feature { get; set; } = new();
 
+    [SuppressMessage("Style", "IDE0058:Expression value is never used", Justification = "Readability")]
     public string ConnectionString
     {
         get
@@ -37,6 +38,7 @@ public class DatabaseConfig
             if (IsValid)
             {
                 builder.Append($"Server={Server};");
+
                 builder.Append($"Port={Port};");
                 builder.Append($"Database={Name};");
                 builder.Append($"Uid={Username};");

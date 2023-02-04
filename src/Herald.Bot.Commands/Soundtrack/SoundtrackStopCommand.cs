@@ -23,7 +23,10 @@ public class SoundtrackStopCommand : SoundtrackBaseCommand
             _logger.LogInformation("Stop Command Executed by {User} in {Guild}", context.User.Id,
                 context.Guild.Id);
 
-            if (!await CommandPreCheckAsync(context)) return;
+            if (!await CommandPreCheckAsync(context))
+            {
+                return;
+            }
 
             await HeraldAudio.StopAsync(context);
         }

@@ -15,10 +15,11 @@ using Herald.Bot.AnyDeal;
 var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((context, services) =>
     {
+#pragma warning disable IDE0058 // Readability
         services.AddHostedService<Worker>();
         services.AddHeraldCore();
         services.AddHeraldApplicationServices();
-        services.AddHeraldInfrastructure(context.Configuration);
+        services.AddHeraldInfrastructure(context.Configuration, context.HostingEnvironment.IsProduction());
         services.AddHeraldEvents();
         services.AddHeraldCommands();
         services.AddHeraldAnyDeal();
@@ -39,6 +40,7 @@ var host = Host.CreateDefaultBuilder(args)
         
         services.AddDiscordClient();
         services.AddAudioServices();
+#pragma warning restore IDE0058 // Expression value is never used
     })
     .UseSerilog((context, configuration) => configuration.ReadFrom.Configuration(context.Configuration))
     .Build();

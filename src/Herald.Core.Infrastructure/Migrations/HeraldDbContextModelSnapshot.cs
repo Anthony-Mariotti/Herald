@@ -19,9 +19,73 @@ namespace Herald.Core.Infrastructure.Migrations
                 .HasAnnotation("ProductVersion", "7.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("Herald.Core.Domain.Entities.Guilds.GuildEntity", b =>
+            modelBuilder.Entity("Herald.Core.Domain.Entities.Catalog.CatalogItem", b =>
                 {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
                     b.Property<ulong>("GuildId")
+                        .HasColumnType("bigint unsigned");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("double");
+
+                    b.Property<int?>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GuildId");
+
+                    b.ToTable("GuildCatalog", (string)null);
+                });
+
+            modelBuilder.Entity("Herald.Core.Domain.Entities.Economies.Economy", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("ChannelRestriction")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(false);
+
+                    b.Property<ulong>("GuildId")
+                        .HasColumnType("bigint unsigned");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Economy", (string)null);
+                });
+
+            modelBuilder.Entity("Herald.Core.Domain.Entities.Economies.EconomyChannel", b =>
+                {
+                    b.Property<long>("EconomyId")
+                        .HasColumnType("bigint");
+
+                    b.Property<ulong>("ChannelId")
+                        .HasColumnType("bigint unsigned");
+
+                    b.HasKey("EconomyId", "ChannelId");
+
+                    b.ToTable("EconomyChannels", (string)null);
+                });
+
+            modelBuilder.Entity("Herald.Core.Domain.Entities.Guilds.Guild", b =>
+                {
+                    b.Property<ulong>("Id")
                         .HasColumnType("bigint unsigned");
 
                     b.Property<bool>("Joined")
@@ -36,9 +100,214 @@ namespace Herald.Core.Infrastructure.Migrations
                     b.Property<ulong>("OwnerId")
                         .HasColumnType("bigint unsigned");
 
-                    b.HasKey("GuildId");
+                    b.HasKey("Id");
 
                     b.ToTable("Guilds", (string)null);
+                });
+
+            modelBuilder.Entity("Herald.Core.Domain.Entities.Inventories.InventoryItem", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("ItemId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("MemberId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int?>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MemberId");
+
+                    b.ToTable("MemberInventories", (string)null);
+                });
+
+            modelBuilder.Entity("Herald.Core.Domain.Entities.Leveling.Level", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("ChanncelRestriction")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(false);
+
+                    b.Property<ulong>("GuildId")
+                        .HasColumnType("bigint unsigned");
+
+                    b.Property<bool>("RoleMode")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("RoleRestriction")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(false);
+
+                    b.Property<double>("XpRate")
+                        .HasColumnType("double");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Levels", (string)null);
+                });
+
+            modelBuilder.Entity("Herald.Core.Domain.Entities.Leveling.LevelMember", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("Level")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValue(0L);
+
+                    b.Property<long>("LevelId")
+                        .HasColumnType("bigint");
+
+                    b.Property<ulong>("MemberId")
+                        .HasColumnType("bigint unsigned");
+
+                    b.Property<double>("Xp")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("double")
+                        .HasDefaultValue(0.0);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LevelId", "MemberId");
+
+                    b.ToTable("LevelMembers", (string)null);
+                });
+
+            modelBuilder.Entity("Herald.Core.Domain.Entities.Leveling.LevelRole", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("AtLevel")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("LevelId")
+                        .HasColumnType("bigint");
+
+                    b.Property<ulong>("RoleId")
+                        .HasColumnType("bigint unsigned");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LevelId");
+
+                    b.ToTable("LevelRole");
+                });
+
+            modelBuilder.Entity("Herald.Core.Domain.Entities.Leveling.RestrictedLevelChannel", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    b.Property<ulong>("ChannelId")
+                        .HasColumnType("bigint unsigned");
+
+                    b.Property<long>("LevelId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LevelId", "ChannelId");
+
+                    b.ToTable("LevelRestrictedChannels", (string)null);
+                });
+
+            modelBuilder.Entity("Herald.Core.Domain.Entities.Leveling.RestrictedLevelRole", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("LevelId")
+                        .HasColumnType("bigint");
+
+                    b.Property<ulong>("RoleId")
+                        .HasColumnType("bigint unsigned");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LevelId", "RoleId");
+
+                    b.ToTable("LevelRestrictedRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Herald.Core.Domain.Entities.Members.Member", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    b.Property<double>("Balance")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("double")
+                        .HasDefaultValue(0.0);
+
+                    b.Property<ulong>("GuildId")
+                        .HasColumnType("bigint unsigned");
+
+                    b.Property<ulong>("MemberId")
+                        .HasColumnType("bigint unsigned");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GuildId");
+
+                    b.ToTable("Members", (string)null);
+                });
+
+            modelBuilder.Entity("Herald.Core.Domain.Entities.Modules.Module", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("varchar(30)");
+
+                    b.Property<bool>("Released")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(false);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Modules", (string)null);
+                });
+
+            modelBuilder.Entity("Herald.Core.Domain.Entities.Modules.ModuleAccess", b =>
+                {
+                    b.Property<long>("ModuleId")
+                        .HasColumnType("bigint");
+
+                    b.Property<ulong>("GuildId")
+                        .HasColumnType("bigint unsigned");
+
+                    b.Property<bool>("HasAccess")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(false);
+
+                    b.HasKey("ModuleId", "GuildId");
+
+                    b.HasIndex("GuildId");
+
+                    b.ToTable("ModuleAccess", (string)null);
                 });
 
             modelBuilder.Entity("Herald.Core.Domain.Entities.Soundtracks.QueueEntity", b =>
@@ -53,26 +322,6 @@ namespace Herald.Core.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Queues", (string)null);
-                });
-
-            modelBuilder.Entity("Herald.Core.Domain.ValueObjects.Modules.HeraldModule", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    b.Property<ulong>("GuildId")
-                        .HasColumnType("bigint unsigned");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GuildId");
-
-                    b.ToTable("GuildModules", (string)null);
                 });
 
             modelBuilder.Entity("Herald.Core.Domain.ValueObjects.Soundtracks.QueuedTrackValue", b =>
@@ -141,13 +390,93 @@ namespace Herald.Core.Infrastructure.Migrations
                     b.ToTable("QueuedTracks", (string)null);
                 });
 
-            modelBuilder.Entity("Herald.Core.Domain.ValueObjects.Modules.HeraldModule", b =>
+            modelBuilder.Entity("Herald.Core.Domain.Entities.Catalog.CatalogItem", b =>
                 {
-                    b.HasOne("Herald.Core.Domain.Entities.Guilds.GuildEntity", null)
+                    b.HasOne("Herald.Core.Domain.Entities.Guilds.Guild", null)
+                        .WithMany("Items")
+                        .HasForeignKey("GuildId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Herald.Core.Domain.Entities.Economies.EconomyChannel", b =>
+                {
+                    b.HasOne("Herald.Core.Domain.Entities.Economies.Economy", null)
+                        .WithMany("Channels")
+                        .HasForeignKey("EconomyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Herald.Core.Domain.Entities.Inventories.InventoryItem", b =>
+                {
+                    b.HasOne("Herald.Core.Domain.Entities.Members.Member", null)
+                        .WithMany("Items")
+                        .HasForeignKey("MemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Herald.Core.Domain.Entities.Leveling.LevelMember", b =>
+                {
+                    b.HasOne("Herald.Core.Domain.Entities.Leveling.Level", null)
+                        .WithMany("Members")
+                        .HasForeignKey("LevelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Herald.Core.Domain.Entities.Leveling.LevelRole", b =>
+                {
+                    b.HasOne("Herald.Core.Domain.Entities.Leveling.Level", null)
+                        .WithMany("Roles")
+                        .HasForeignKey("LevelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Herald.Core.Domain.Entities.Leveling.RestrictedLevelChannel", b =>
+                {
+                    b.HasOne("Herald.Core.Domain.Entities.Leveling.Level", null)
+                        .WithMany("ResitrctedChannels")
+                        .HasForeignKey("LevelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Herald.Core.Domain.Entities.Leveling.RestrictedLevelRole", b =>
+                {
+                    b.HasOne("Herald.Core.Domain.Entities.Leveling.Level", null)
+                        .WithMany("RestrictedRoles")
+                        .HasForeignKey("LevelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Herald.Core.Domain.Entities.Members.Member", b =>
+                {
+                    b.HasOne("Herald.Core.Domain.Entities.Guilds.Guild", null)
+                        .WithMany("Members")
+                        .HasForeignKey("GuildId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Herald.Core.Domain.Entities.Modules.ModuleAccess", b =>
+                {
+                    b.HasOne("Herald.Core.Domain.Entities.Guilds.Guild", null)
                         .WithMany("Modules")
                         .HasForeignKey("GuildId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Herald.Core.Domain.Entities.Modules.Module", "Module")
+                        .WithMany()
+                        .HasForeignKey("ModuleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Module");
                 });
 
             modelBuilder.Entity("Herald.Core.Domain.ValueObjects.Soundtracks.QueuedTrackValue", b =>
@@ -158,9 +487,34 @@ namespace Herald.Core.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Herald.Core.Domain.Entities.Guilds.GuildEntity", b =>
+            modelBuilder.Entity("Herald.Core.Domain.Entities.Economies.Economy", b =>
                 {
+                    b.Navigation("Channels");
+                });
+
+            modelBuilder.Entity("Herald.Core.Domain.Entities.Guilds.Guild", b =>
+                {
+                    b.Navigation("Items");
+
+                    b.Navigation("Members");
+
                     b.Navigation("Modules");
+                });
+
+            modelBuilder.Entity("Herald.Core.Domain.Entities.Leveling.Level", b =>
+                {
+                    b.Navigation("Members");
+
+                    b.Navigation("ResitrctedChannels");
+
+                    b.Navigation("RestrictedRoles");
+
+                    b.Navigation("Roles");
+                });
+
+            modelBuilder.Entity("Herald.Core.Domain.Entities.Members.Member", b =>
+                {
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("Herald.Core.Domain.Entities.Soundtracks.QueueEntity", b =>

@@ -1,6 +1,5 @@
 ﻿using Herald.Core.Application.Abstractions;
 using Herald.Core.Domain.Entities.Guilds;
-using Herald.Core.Domain.Events.Guilds;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,25 +21,17 @@ public class GuildAvailableCommandHandler : IRequestHandler<GuildAvailableComman
     public async Task<Unit> Handle(GuildAvailableCommand request, CancellationToken cancellationToken)
     {
         var guild = await _context.Guilds
-            .SingleOrDefaultAsync(x => x.GuildId.Equals(request.GuildId), cancellationToken);
+            .SingleOrDefaultAsync(x => x.Id.Equals(request.GuildId), cancellationToken);
 
-        if (guild is not null)
+        if (guild is null)
         {
-            if (guild.Joined) return Unit.Value;
-            
-            guild.JoinedServer(request.OwnerId);
-
-            guild.AddDomainEvent(new GuildRejoinedEvent(request.GuildId, request.OwnerId));
-            await _context.SaveChangesAsync(cancellationToken);
-            return Unit.Value;
+            guild = new Guild(request.GuildId, request.OwnerId, _dateTime.UtcNow);
+            _ = _context.Guilds.Add(guild);
         }
-        
-        guild = GuildEntity.Create(request.GuildId, request.OwnerId, _dateTime.UtcNow);
 
-        _context.Guilds.Add(guild);
+        guild.JoinedServer(request.OwnerId);
             
-        guild.AddDomainEvent(new GuildCreatedEvent(request.GuildId, request.OwnerId));
-        await _context.SaveChangesAsync(cancellationToken);
+        _ = await _context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;
     }

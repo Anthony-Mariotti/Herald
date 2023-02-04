@@ -46,7 +46,9 @@ public class SoundtrackQueueCommand : SoundtrackBaseCommand
             await inter.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("Success"));
         }
         else
-            await context.Channel.SendMessageAsync("Request timed out");
+        {
+            _ = await context.Channel.SendMessageAsync("Request timed out");
+        }
     }
 
     [SlashCommand("clear", "Clear out the current track queue")]
@@ -55,7 +57,9 @@ public class SoundtrackQueueCommand : SoundtrackBaseCommand
         _logger.LogInformation("Clear Command Executed by {User} in {Guild}", context.User.Username, context.Guild.Name);
         
         if (!await CommandPreCheckAsync(context))
+        {
             return;
+        }
         
         await context.CreateResponseAsync(new DiscordInteractionResponseBuilder().WithContent("TODO: Queue Clear Command"));
     }
@@ -66,7 +70,9 @@ public class SoundtrackQueueCommand : SoundtrackBaseCommand
         _logger.LogInformation("Play Queue Command Executed by {User} in {Guild}", context.User.Username, context.Guild.Name);
 
         if (!await CommandPreCheckAsync(context))
+        {
             return;
+        }
 
         await context.CreateResponseAsync(new DiscordInteractionResponseBuilder().WithContent("TODO: Queue Play Command"));
     }
@@ -80,7 +86,10 @@ public class SoundtrackQueueCommand : SoundtrackBaseCommand
             _logger.LogInformation("Queue Add Executed by {User} in {Guild}", context.User.Username,
                 context.Guild.Name);
             
-            if (!await CommandPreCheckAsync(context)) return;
+            if (!await CommandPreCheckAsync(context))
+            {
+                return;
+            }
 
             if (string.IsNullOrWhiteSpace(search))
             {
@@ -104,7 +113,7 @@ public class SoundtrackQueueCommand : SoundtrackBaseCommand
                     return;
                 }
                 
-                await context.Channel.SendMessageAsync("Request timed out");
+                _ = await context.Channel.SendMessageAsync("Request timed out");
                 return;
             }
             

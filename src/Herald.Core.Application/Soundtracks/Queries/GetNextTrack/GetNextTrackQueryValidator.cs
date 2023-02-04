@@ -6,7 +6,7 @@ public class GetNextTrackQueryValidator : AbstractValidator<GetNextTrackQuery>
 {
     public GetNextTrackQueryValidator()
     {
-        RuleFor(x => x.GuildId)
+        _ = RuleFor(x => x.GuildId)
             .NotEmpty().WithMessage("GuildId is required.");
     }
 }

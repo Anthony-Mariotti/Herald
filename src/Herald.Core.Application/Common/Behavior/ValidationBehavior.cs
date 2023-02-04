@@ -21,7 +21,10 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
         _logger.LogTrace("Running {Behavior} on {Request}", typeof(ValidationBehavior<,>).Name,
             typeof(TRequest).Name);
         
-        if (!_validators.Any()) return await next();
+        if (!_validators.Any())
+        {
+            return await next();
+        }
         
         var context = new ValidationContext<TRequest>(request);
 
@@ -33,9 +36,8 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
             .SelectMany(r => r.Errors)
             .ToList();
 
-        if (failures.Any())
-            throw new ValidationException(failures);
-
-        return await next();
+        return failures.Any()
+            ? throw new ValidationException(failures)
+            : await next();
     }
 }

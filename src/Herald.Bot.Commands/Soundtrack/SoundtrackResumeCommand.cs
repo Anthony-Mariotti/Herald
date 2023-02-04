@@ -23,7 +23,10 @@ public class SoundtrackResumeCommand : SoundtrackBaseCommand
             _logger.LogInformation("Soundtrack Resume Command Executed by {User} in {Guild}", context.User.Id,
                 context.Guild.Id);
             
-            if (!await CommandPreCheckAsync(context)) return;
+            if (!await CommandPreCheckAsync(context))
+            {
+                return;
+            }
 
             await HeraldAudio.ResumeAsync(context);
         }

@@ -50,7 +50,7 @@ Studio, so sorry in advance.
 
 - Running Docker Containers:
   - [fredboat/lavalink:master](https://hub.docker.com/r/fredboat/lavalink/)
-  - [mcr.microsoft.com/mssql/server:2022-latest](https://hub.docker.com/_/microsoft-mssql-server)
+  - [mysql:latest](https://hub.docker.com/_/mysql)
 
 
 - Valid Discord Bot Key

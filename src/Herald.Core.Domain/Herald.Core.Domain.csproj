@@ -16,4 +16,9 @@
       <PackageReference Include="MediatR.Contracts" Version="1.0.1" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Entities\Leveling\Events\" />
+      <Folder Include="Events\Guilds\" />
+    </ItemGroup>
+
 </Project>

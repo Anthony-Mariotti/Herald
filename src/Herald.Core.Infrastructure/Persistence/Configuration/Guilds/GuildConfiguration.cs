@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Herald.Core.Infrastructure.Persistence.Configuration.Guilds;
 
-public class GuildConfiguration : IEntityTypeConfiguration<GuildEntity>
+public class GuildConfiguration : IEntityTypeConfiguration<Guild>
 {
-    public void Configure(EntityTypeBuilder<GuildEntity> builder)
+    public void Configure(EntityTypeBuilder<Guild> builder)
     {
         builder.ToTable("Guilds");
-        builder.HasKey(p => p.GuildId);
-        builder.Property(p => p.GuildId)
+        builder.HasKey(p => p.Id);
+        builder.Property(p => p.Id)
             .ValueGeneratedNever()
             .IsRequired();
 
@@ -20,16 +20,21 @@ public class GuildConfiguration : IEntityTypeConfiguration<GuildEntity>
         builder.Property(p => p.Joined)
             .IsRequired();
 
-        builder.HasMany(p => p.Modules)
+        builder.HasMany(x => x.Modules)
             .WithOne()
-            .HasForeignKey("GuildId")
-            .IsRequired();
+            .HasForeignKey(x => x.GuildId);
+
+        builder.HasMany(x => x.Items)
+            .WithOne()
+            .HasForeignKey(x => x.GuildId);
+
+        builder.HasMany(x => x.Members)
+            .WithOne()
+            .HasForeignKey(x => x.GuildId);
 
         builder.Property(p => p.JoinedOn)
             .IsRequired();
 
         builder.Property(p => p.LeftOn);
-
-        builder.Ignore(p => p.DomainEvents);
     }
 }

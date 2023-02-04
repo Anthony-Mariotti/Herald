@@ -27,8 +27,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Herald.Core.Domain.UnitTest
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Herald.Bot.Audio", "src\Herald.Bot.Audio\Herald.Bot.Audio.csproj", "{91408B8E-16EC-4AC3-BD00-E5A68DB04C49}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Herald.Bot.Reward", "src\Herald.Bot.Reward\Herald.Bot.Reward.csproj", "{34135DBD-C498-4250-B2D7-0DD9268D4EF7}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Herald.Bot.AnyDeal", "src\Herald.Bot.AnyDeal\Herald.Bot.AnyDeal.csproj", "{0742C7AD-6F29-4BA1-869E-E2EE6C169276}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{1040697D-6999-4D4D-AD18-5BDA8A502132}"
@@ -38,6 +36,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 		.github\workflows\build.yml = .github\workflows\build.yml
 		.github\workflows\codeql-analysis.yml = .github\workflows\codeql-analysis.yml
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E8F50314-A5D7-4A46-853C-784AFAA381BF}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Herald.Bot.Level", "src\Herald.Bot.Level\Herald.Bot.Level.csproj", "{35307575-580D-4096-AF3E-37CF079EAC50}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -89,14 +95,14 @@ Global
 		{91408B8E-16EC-4AC3-BD00-E5A68DB04C49}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91408B8E-16EC-4AC3-BD00-E5A68DB04C49}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{91408B8E-16EC-4AC3-BD00-E5A68DB04C49}.Release|Any CPU.Build.0 = Release|Any CPU
-		{34135DBD-C498-4250-B2D7-0DD9268D4EF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{34135DBD-C498-4250-B2D7-0DD9268D4EF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{34135DBD-C498-4250-B2D7-0DD9268D4EF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{34135DBD-C498-4250-B2D7-0DD9268D4EF7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0742C7AD-6F29-4BA1-869E-E2EE6C169276}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0742C7AD-6F29-4BA1-869E-E2EE6C169276}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0742C7AD-6F29-4BA1-869E-E2EE6C169276}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0742C7AD-6F29-4BA1-869E-E2EE6C169276}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35307575-580D-4096-AF3E-37CF079EAC50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35307575-580D-4096-AF3E-37CF079EAC50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35307575-580D-4096-AF3E-37CF079EAC50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35307575-580D-4096-AF3E-37CF079EAC50}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -8,21 +8,20 @@ public class PerformanceBehavior<TRequest, TResponse> : IPipelineBehavior<TReque
     where TRequest : IRequest<TResponse>
 {
     private readonly ILogger<PerformanceBehavior<TRequest, TResponse>> _logger;
-    private readonly ILogger<TRequest> _requestLogger;
 
     private readonly Stopwatch _timer;
     
     public PerformanceBehavior(ILoggerFactory logger)
     {
         _logger = logger.CreateLogger<PerformanceBehavior<TRequest, TResponse>>();
-        _requestLogger = logger.CreateLogger<TRequest>();
-
         _timer = new Stopwatch();
     }
     
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        _logger.LogTrace("Running {Behavior} on {Request}", typeof(PerformanceBehavior<,>).Name,
+        _logger.LogTrace(
+            "Running {Behavior} on {Request}",
+            typeof(PerformanceBehavior<,>).Name,
             typeof(TRequest).Name);
         
         _timer.Start();

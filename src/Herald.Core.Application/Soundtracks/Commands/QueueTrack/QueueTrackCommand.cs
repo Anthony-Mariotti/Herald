@@ -43,7 +43,7 @@ public class QueueTrackCommandHandler : IRequestHandler<QueueTrackCommand>
             queue.AddTrack(request.Track);
             queue.AddDomainEvent(new TrackQueuedEvent(request.GuildId, request.Track));
 
-            await _context.SaveChangesAsync(cancellationToken);
+            _ = await _context.SaveChangesAsync(cancellationToken);
             return Unit.Value;
         }
         
@@ -52,7 +52,7 @@ public class QueueTrackCommandHandler : IRequestHandler<QueueTrackCommand>
         queue.AddTrack(request.Track);
         queue.AddDomainEvent(new TrackQueuedEvent(request.GuildId, request.Track));
 
-        await _context.SaveChangesAsync(cancellationToken);
+        _ = await _context.SaveChangesAsync(cancellationToken);
         
         return Unit.Value;
     }

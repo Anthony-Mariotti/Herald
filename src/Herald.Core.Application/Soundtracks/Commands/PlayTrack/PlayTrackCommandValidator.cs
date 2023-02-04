@@ -8,10 +8,10 @@ public class PlayTrackCommandValidator : AbstractValidator<PlayTrackCommand>
 {
     public PlayTrackCommandValidator()
     {
-        RuleFor(x => x.GuildId)
+        _ = RuleFor(x => x.GuildId)
             .NotEmpty().WithMessage($"{nameof(PlayTrackCommand)} required a GuildId.");
 
-        RuleFor(x => x.Track)
+        _ = RuleFor(x => x.Track)
             .NotEmpty().WithMessage($"{nameof(PlayTrackCommand)} requires a Track.")
             .Must(HavePlayingStatus)
             .WithMessage($"{nameof(PlayTrackCommand)} requires a track status of \"{nameof(TrackStatus.Playing)}\".");

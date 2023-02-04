@@ -21,8 +21,8 @@
     <ItemGroup>
       <Folder Include="AnyDeals\Commands\" />
       <Folder Include="Guilds\Queries" />
-      <Folder Include="Rewards\Commands\" />
-      <Folder Include="Rewards\Queries\" />
+      <Folder Include="Levels\Commands\" />
+      <Folder Include="Levels\Queries\" />
     </ItemGroup>
 
     <ItemGroup>

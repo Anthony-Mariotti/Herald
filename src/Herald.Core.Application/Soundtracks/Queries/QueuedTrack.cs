@@ -28,12 +28,10 @@ public class QueuedTrack : IMapFrom<QueuedTrackValue>
     public string Source { get; set; } = string.Empty;
     
     public string Encoded { get; set; } = string.Empty;
-    
-    public void Mapping(Profile profile)
-    {
+
+    public void Mapping(Profile profile) =>
         profile.CreateMap<QueuedTrackValue, QueuedTrack>();
-    }
-    
+
     public LavalinkTrack GetLavalinkTrack() =>
         new LavalinkTrack(Encoded, Author, Duration, Livestream, Seekable, Source, Title, Identifier,
             (StreamProvider)Enum.Parse(typeof(StreamProvider), Provider, true));

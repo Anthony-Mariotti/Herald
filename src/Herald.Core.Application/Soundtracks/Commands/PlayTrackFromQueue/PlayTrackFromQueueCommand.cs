@@ -30,11 +30,13 @@ public class PlayTrackFromQueueCommandHandler : IRequestHandler<PlayTrackFromQue
                 cancellationToken);
 
         if (queue is null)
+        {
             throw new NotFoundException(nameof(QueueEntity), request.GuildId);
-        
+        }
+
         queue.PlayTrack(request.TrackIdentifier);
 
-        await _context.SaveChangesAsync(cancellationToken);
+        _ = await _context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;
     }

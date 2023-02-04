@@ -6,10 +6,10 @@ public class PlayTrackFromQueueCommandValidator : AbstractValidator<PlayTrackFro
 {
     public PlayTrackFromQueueCommandValidator()
     {
-        RuleFor(x => x.GuildId)
+        _ = RuleFor(x => x.GuildId)
             .NotEmpty().WithMessage($"{nameof(PlayTrackFromQueueCommand)} requires a GuildId");
         
-        RuleFor(x => x.TrackIdentifier)
+        _ = RuleFor(x => x.TrackIdentifier)
             .NotEmpty().WithMessage($"{nameof(PlayTrackFromQueueCommand)} requires a TrackIdentifier");
     }
 }

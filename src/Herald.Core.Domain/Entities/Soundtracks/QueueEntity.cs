@@ -3,7 +3,7 @@ using Herald.Core.Domain.ValueObjects.Soundtracks;
 
 namespace Herald.Core.Domain.Entities.Soundtracks;
 
-public sealed class QueueEntity : BaseEntity, IAggregateRoot
+public sealed class QueueEntity : BaseDomainEntity, IAggregateRoot
 {
     public ulong GuildId { get; set; }
     
@@ -40,20 +40,30 @@ public sealed class QueueEntity : BaseEntity, IAggregateRoot
     public void PlayTrack(string trackIdentifier)
     {
         if (string.IsNullOrWhiteSpace(trackIdentifier))
+        {
             throw new ArgumentException("Value cannot be null or whitespace.", nameof(trackIdentifier));
+        }
 
-        bool IsQueuedTrack(QueuedTrackValue track, string identifier)
-            => track.Status.Equals(TrackStatus.Queued) && track.Identifier.Equals(identifier);
+        static bool IsQueuedTrack(QueuedTrackValue track, string identifier)
+        {
+            return track.Status.Equals(TrackStatus.Queued) && track.Identifier.Equals(identifier);
+        }
 
-        if (!Tracks.Any(x => IsQueuedTrack(x, trackIdentifier))) return;
-        
+        if (!Tracks.Any(x => IsQueuedTrack(x, trackIdentifier)))
+        {
+            return;
+        }
+
         var track = Tracks.FirstOrDefault(x => IsQueuedTrack(x, trackIdentifier));
         track?.Play(TrackStatusReason.FromQueue);
     }
     
     public void AddTrack(QueuedTrackValue track)
     {
-        if (track is null) throw new ArgumentNullException(nameof(track));
+        if (track is null)
+        {
+            throw new ArgumentNullException(nameof(track));
+        }
 
         if (track.Status.Equals(TrackStatus.Playing))
         {
@@ -68,21 +78,32 @@ public sealed class QueueEntity : BaseEntity, IAggregateRoot
 
     public void RemoveTrack(string trackId)
     {
-        if (trackId is null) throw new ArgumentNullException(nameof(trackId));
+        if (trackId is null)
+        {
+            throw new ArgumentNullException(nameof(trackId));
+        }
+
         if (string.IsNullOrWhiteSpace(trackId))
+        {
             throw new ArgumentException("Value cannot be null or whitespace.", nameof(trackId));
+        }
 
         var track = Tracks.SingleOrDefault(x => x.Identifier.Equals(trackId));
 
-        if (track is null) return;
-        
-        Tracks.Remove(track);
+        if (track is null)
+        {
+            return;
+        }
+
+        _ = Tracks.Remove(track);
     }
 
     public void TrackEnded(string identifier, TrackStatusReason reason)
     {
         if (string.IsNullOrWhiteSpace(identifier))
+        {
             throw new ArgumentException("Value cannot be null or whitespace.", nameof(identifier));
+        }
 
         var track = Tracks.SingleOrDefault(x =>
             x.Identifier.Equals(identifier) && 
@@ -95,20 +116,25 @@ public sealed class QueueEntity : BaseEntity, IAggregateRoot
     private void AuditHistory()
     {
         const int maxCount = 15;
-        
-        bool IsPlayed(QueuedTrackValue x) => 
-            x.Status.Equals(TrackStatus.Played) ||
+
+        static bool IsPlayed(QueuedTrackValue x)
+        {
+            return x.Status.Equals(TrackStatus.Played) ||
             x.Status.Equals(TrackStatus.Failed) ||
             x.Status.Equals(TrackStatus.Skipped);
-        
+        }
+
         var playedCount = Tracks.Count(IsPlayed);
-        if (playedCount <= maxCount) return;
+        if (playedCount <= maxCount)
+        {
+            return;
+        }
 
         var removeCount = playedCount - maxCount;
         var tracks = Tracks.Where(IsPlayed).Take(removeCount).ToList();
         foreach (var track in tracks)
         {
-            Tracks.Remove(track);
+            _ = Tracks.Remove(track);
         }
     }
 }

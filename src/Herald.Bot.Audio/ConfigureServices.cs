@@ -4,11 +4,13 @@ using Herald.Core.Configuration;
 using Lavalink4NET;
 using Lavalink4NET.DSharpPlus;
 using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Herald.Bot.Audio;
 
 public static class ConfigureServices
 {
+    [SuppressMessage("Style", "IDE0058:Expression value is never used", Justification = "Readability")]
     public static IServiceCollection AddAudioServices(this IServiceCollection services)
     {
         services.AddSingleton<IDiscordClientWrapper, DiscordClientWrapper>();

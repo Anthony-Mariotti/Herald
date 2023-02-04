@@ -7,8 +7,6 @@ public record DequeueTrackCommand(ulong GuildId, QueuedTrackValue Track) : IRequ
 
 public class DequeueTrackCommandHandler : IRequestHandler<DequeueTrackCommand>
 {
-    public Task<Unit> Handle(DequeueTrackCommand request, CancellationToken cancellationToken)
-    {
+    public Task<Unit> Handle(DequeueTrackCommand request, CancellationToken cancellationToken) =>
         throw new NotImplementedException();
-    }
 }

@@ -1,13 +1,13 @@
 ﻿using Herald.Core.Application.Abstractions;
 using Herald.Core.Application.Exceptions;
 using Herald.Core.Domain.Entities.Guilds;
-using Herald.Core.Domain.ValueObjects.Modules;
+using Herald.Core.Domain.Entities.Modules;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Herald.Core.Application.Modules.Queries;
 
-public record ModuleEnabledQuery(ulong GuildId, HeraldModule Module) : IRequest<bool>;
+public record ModuleEnabledQuery(ulong GuildId, Module Module) : IRequest<bool>;
 
 public class ModuleEnabledQueryHandler : IRequestHandler<ModuleEnabledQuery, bool>
 {
@@ -21,13 +21,11 @@ public class ModuleEnabledQueryHandler : IRequestHandler<ModuleEnabledQuery, boo
     public async Task<bool> Handle(ModuleEnabledQuery request, CancellationToken cancellationToken)
     {
         var guild = await _context.Guilds
-            .SingleOrDefaultAsync(x => x.GuildId.Equals(request.GuildId));
+            .Include(x => x.Modules)
+            .SingleOrDefaultAsync(x => x.Id.Equals(request.GuildId), cancellationToken);
 
-        if (guild is null)
-        {
-            throw new NotFoundException(nameof(GuildEntity), request.GuildId);
-        }
-
-        return guild.Modules.Any(x => x.Name.Equals(request.Module.Name));
+        return guild is null
+            ? throw new NotFoundException(nameof(Guild), request.GuildId)
+            : guild.HasAccess(request.Module);
     }
 }

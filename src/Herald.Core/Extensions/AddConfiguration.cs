@@ -10,6 +10,8 @@ public static partial class HeraldCoreExtensions
         => services.AddSingleton(provider =>
         {
             var config = provider.GetRequiredService<IConfiguration>();
-            return config.GetSection(nameof(HeraldConfig)).Get<HeraldConfig>();
+            var herald = config.GetSection(nameof(HeraldConfig)).Get<HeraldConfig>();
+
+            return herald ?? throw new NullReferenceException(nameof(herald));
         });
 }

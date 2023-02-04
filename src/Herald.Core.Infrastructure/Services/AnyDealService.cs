@@ -17,11 +17,8 @@ public class AnyDealService : IAnyDealService
 	{
 		var response = await _client.GetFromJsonAsync<AnyDealData>($"v02/search/search/?q={name}&limit=5");
 
-		if (response is null)
-		{
-			return new AnyDealDataList();
-		}
-
-		return response.Data;
-	}
+        return response is null
+			? new AnyDealDataList()
+			: response.Data;
+    }
 }
